@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bloom · Placement Study Planner</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#E28FA4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ============ tokens ============ */
+:root{
+  --bg:#FBF3F6; --bg2:#FDF8FA;
+  --card:#FFFFFF; --card2:#FBF0F4;
+  --border:#F1DEE6; --border2:#E5C8D4;
+  --text:#46303C; --text2:#82656F; --text3:#B39AA5;
+  --pink:#E28FA4; --pink2:#EDABC0; --pink-soft:#FBE8EF;
+  --rose:#C25E7B; --rose2:#D2738E;
+  --gold:#C29B4C; --gold-soft:#F9F0DC;
+  --terra:#C97F6B; --terra-soft:#F9E9E3;
+  --lv0:#F7ECF1; --lv1:#F4D6E0; --lv2:#E9AEC0; --lv3:#D67E99; --lv4:#AC4A6A;
+  --toast-bg:#46303C; --toast-fg:#FBF3F6;
+  --shadow:0 1px 2px rgba(90,48,66,.05),0 8px 24px rgba(90,48,66,.08);
+  --shadow-lg:0 14px 44px rgba(90,48,66,.18);
+}
+[data-theme="dark"]{
+  --bg:#221820; --bg2:#281D25;
+  --card:#2F222B; --card2:#362932;
+  --border:#44323E; --border2:#523C49;
+  --text:#F4E9EE; --text2:#C9B2BC; --text3:#977F8B;
+  --pink:#E8A3B6; --pink2:#DB8DA3; --pink-soft:#3D2A34;
+  --rose:#E29BB2; --rose2:#ECB1C4;
+  --gold:#D8B76E; --gold-soft:#3B3122;
+  --terra:#D89C8D; --terra-soft:#412D27;
+  --lv0:#332531; --lv1:#4E3040; --lv2:#6D4156; --lv3:#93566E; --lv4:#C27E96;
+  --toast-bg:#F4E9EE; --toast-fg:#2A1B22;
+  --shadow:0 1px 2px rgba(0,0,0,.25),0 8px 24px rgba(0,0,0,.3);
+  --shadow-lg:0 14px 44px rgba(0,0,0,.45);
+}
+/* ============ base ============ */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;font-size:15px;line-height:1.55;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif;line-height:1.2;color:var(--text)}
+.serif{font-family:'Fraunces',serif}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:none}
+.hidden{display:none!important}
+::selection{background:var(--pink-soft);color:var(--rose)}
+::-webkit-scrollbar{width:10px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:8px}
+:focus-visible{outline:2px solid var(--pink);outline-offset:2px;border-radius:6px}
+.ic{width:19px;height:19px;flex:none}
+.ic.s{width:14px;height:14px}
+/* ============ buttons ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:14px;border:1px solid transparent;border-radius:12px;padding:10px 18px;transition:transform .15s,background .15s,border-color .15s,box-shadow .15s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--rose);color:#FFF8FA}
+[data-theme="dark"] .btn-primary{color:#2A1B22}
+.btn-primary:hover{background:var(--rose2);transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn-ghost{border-color:var(--border2);background:transparent;color:var(--text2)}
+.btn-ghost:hover{background:var(--card2);color:var(--text);border-color:var(--pink)}
+.btn-soft{background:var(--pink-soft);color:var(--rose)}
+[data-theme="dark"] .btn-soft{color:#F4E9EE}
+.btn-soft:hover{filter:brightness(1.03)}
+.btn-danger-solid{background:var(--terra);color:#FFF6F2}
+.btn-danger-solid:hover{filter:brightness(1.05)}
+.btn-sm{padding:7px 12px;font-size:13px;border-radius:10px}
+.btn-lg{padding:14px 26px;font-size:15px;border-radius:14px}
+.btn-icon{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;color:var(--text3);transition:.15s}
+.btn-icon:hover{background:var(--card2);color:var(--text)}
+.btn-icon.danger:hover{background:var(--terra-soft);color:var(--terra)}
+/* ============ cards & layout bits ============ */
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:var(--shadow)}
+.card-soft{background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:16px}
+.lift{transition:transform .18s,box-shadow .18s}
+.lift:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.eyebrow{display:block;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--pink);margin-bottom:6px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.page-head h1{font-size:clamp(22px,3vw,28px);font-weight:800}
+.page-sub{color:var(--text2);font-size:14px}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.empty{text-align:center;padding:44px 24px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.empty .empty-ic{width:48px;height:48px;border-radius:50%;background:var(--pink-soft);color:var(--rose);display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.empty h3{font-size:18px}
+.empty p{color:var(--text2);font-size:14px;max-width:380px}
+.empty .btn{margin-top:10px}
+.empty-line{color:var(--text3);font-size:13.5px;font-style:italic}
+.list-note{font-size:12.5px;color:var(--text3);margin-top:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:5px 12px;border-radius:999px;background:var(--card2);border:1px solid var(--border);color:var(--text2)}
+/* ============ shell ============ */
+.app{min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:250px;padding:22px 14px 18px;border-right:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;gap:4px;z-index:50}
+.logo{display:flex;align-items:center;gap:11px;padding:4px 10px 18px}
+.logo-ic{width:38px;height:38px;border-radius:12px;background:var(--pink-soft);color:var(--rose);display:flex;align-items:center;justify-content:center}
+.logo-name{font-family:'Plus Jakarta Sans';font-weight:800;font-size:18px;letter-spacing:-.01em}
+.logo-tag{font-size:11px;color:var(--text3);font-weight:700}
+.side-nav{display:flex;flex-direction:column;gap:2px;flex:1}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;color:var(--text2);font-weight:700;font-size:14px;text-align:left;width:100%;transition:.15s}
+.nav-item:hover{background:var(--card2);color:var(--text)}
+.nav-item:active{transform:scale(.97)}
+.nav-item.active{background:var(--pink-soft);color:var(--rose)}
+[data-theme="dark"] .nav-item.active{color:#F4E9EE}
+.side-foot{display:flex;flex-direction:column;gap:10px;padding:0 6px}
+.side-streak{text-align:center;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px}
+.streak-num{font-family:'Plus Jakarta Sans';font-weight:800;font-size:22px}
+.streak-lbl{font-size:11.5px;color:var(--text3);font-weight:700}
+.side-tag{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);text-align:center;font-weight:700}
+.side-foot-row{display:flex;justify-content:center}
+.main{margin-left:250px;min-height:100vh}
+.page{max-width:1080px;margin:0 auto;padding:30px 36px 60px;animation:fadeUp .3s ease both}
+.topbar{display:none}
+.bottomnav{display:none}
+/* ============ segments ============ */
+.seg{display:inline-flex;background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:4px;gap:2px;flex-wrap:wrap}
+.seg button{padding:7px 13px;border-radius:9px;font-weight:700;font-size:13px;color:var(--text3);transition:.15s}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:var(--card);color:var(--rose);box-shadow:var(--shadow)}
+[data-theme="dark"] .seg button.on{color:#F4E9EE}
+.filters{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+/* ============ dashboard ============ */
+.dash-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.dash-head h1{font-size:clamp(23px,3.4vw,30px);font-weight:800}
+.dash-dayline{color:var(--text2);font-size:14px;margin-top:4px}
+.quote{font-family:'Fraunces',serif;font-style:italic;font-size:17px;color:var(--text2);border-left:3px solid var(--pink);padding:4px 0 4px 16px;margin:20px 0 24px;max-width:560px}
+.dash-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-bottom:26px}
+.dash-side{display:flex;flex-direction:column;gap:16px}
+.mission{display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;padding:28px 24px}
+.mission-head{display:flex;justify-content:space-between;width:100%;align-items:center}
+.mission-stats{display:flex;width:100%;border-top:1px solid var(--border);padding-top:16px}
+.mission-stats>div{flex:1;display:flex;flex-direction:column;gap:2px}
+.mission-stats>div+div{border-left:1px solid var(--border)}
+.mission-stats .ms-v{font-family:'Plus Jakarta Sans';font-weight:800;font-size:19px}
+.mission-stats .ms-l{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+.mission-cap{font-size:13.5px;color:var(--text2)}
+.mission-done .big{font-family:'Plus Jakarta Sans';font-weight:800;font-size:24px;color:var(--gold)}
+.mission-done p{color:var(--text2)}
+.quick{display:flex;gap:10px;flex-wrap:wrap}
+.quick .q{flex:1;min-width:100px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow)}
+.quick .q b{display:block;font-family:'Plus Jakarta Sans';font-size:19px;font-weight:800}
+.quick .q span{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.card-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title h3{font-size:16px;font-weight:800}
+/* ============ rings ============ */
+.ring-wrap{position:relative;display:inline-block}
+.ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg);display:block}
+.ring-track{stroke:var(--border)}
+.ring-fill{stroke:var(--pink);transition:stroke-dashoffset .9s cubic-bezier(.22,.8,.28,1)}
+.ring-fill.live{transition:stroke-dashoffset .35s linear}
+.ring-fill.gold{stroke:var(--gold)}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ring-pct{font-family:'Plus Jakarta Sans';font-weight:800;font-size:26px;line-height:1}
+.ring-pct-sm{font-family:'Plus Jakarta Sans';font-weight:800;font-size:19px;line-height:1}
+/* ============ tasks ============ */
+.task-list{display:flex;flex-direction:column;gap:12px}
+.task{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px 18px;box-shadow:var(--shadow)}
+.task.dragging{opacity:.45;border-style:dashed}
+.task.drop-target{border-color:var(--pink)}
+.task-check{width:26px;height:26px;flex:none;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;color:transparent;transition:.2s;margin-top:2px}
+.task-check:hover{border-color:var(--pink)}
+.task-check.on{background:var(--rose);border-color:var(--rose);color:#fff;animation:pop .3s cubic-bezier(.2,1.6,.4,1)}
+.task-check .ic{width:14px;height:14px}
+.task-main{flex:1;min-width:0}
+.task-title{font-weight:800;font-size:15px;font-family:'Plus Jakarta Sans'}
+.task.done .task-title{color:var(--text3);text-decoration:line-through;text-decoration-color:var(--border2);font-weight:600}
+.task-meta{display:flex;flex-wrap:wrap;gap:6px;font-size:12.5px;color:var(--text2);margin-top:4px;align-items:center}
+.task-meta .dot{opacity:.4}
+.t-sub{font-weight:700}
+.prio.high{color:var(--terra);font-weight:800}
+.prio.medium{color:var(--gold);font-weight:800}
+.prio.low{color:var(--text3);font-weight:700}
+.overdue{color:var(--terra);font-weight:800}
+.task-prog{display:flex;align-items:center;gap:10px;margin-top:8px}
+.task-prog-bar{flex:1;max-width:180px;height:5px;border-radius:3px;background:var(--card2);overflow:hidden}
+.task-prog-bar i{display:block;height:100%;border-radius:3px;background:var(--pink);transition:width .6s ease}
+.task-prog span{font-size:12px;color:var(--text2);font-weight:700;white-space:nowrap}
+.task-desc{font-size:13px;color:var(--text2);margin-top:6px}
+.task-done-note{font-size:12.5px;color:var(--rose);font-weight:700;margin-top:6px}
+.task-actions{display:flex;align-items:center;gap:4px;flex:none}
+.reorder{display:flex;flex-direction:column}
+.reorder .btn-icon{width:26px;height:22px}
+/* ============ focus ============ */
+.focus-wrap{max-width:620px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center}
+.focus-badge{letter-spacing:.22em;font-size:11.5px;font-weight:800;color:var(--rose);background:var(--pink-soft);padding:7px 16px;border-radius:999px}
+[data-theme="dark"] .focus-badge{color:#F4E9EE}
+.focus-badge.goldb{color:var(--gold);background:var(--gold-soft)}
+.focus-task{font-size:clamp(20px,3vw,26px);font-weight:800}
+.f-clock{font-family:'Plus Jakarta Sans';font-size:clamp(44px,9vw,60px);font-weight:800;letter-spacing:.01em;font-variant-numeric:tabular-nums;line-height:1.1}
+.f-sub{font-size:12.5px;color:var(--text3);font-weight:700;margin-top:2px}
+.focus-line{color:var(--text2);font-size:14.5px}
+.focus-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.focus-meta{font-size:13px;color:var(--text3);font-weight:700}
+.f-taskbar-wrap{width:min(320px,80vw)}
+.focus-setup{width:100%;text-align:left;display:flex;flex-direction:column;gap:4px}
+.dur-chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dur-chip{padding:9px 16px;border-radius:999px;border:1.5px solid var(--border2);font-weight:800;font-size:14px;color:var(--text2);transition:.15s}
+.dur-chip:hover{border-color:var(--pink)}
+.dur-chip.on{background:var(--pink-soft);border-color:var(--pink);color:var(--rose)}
+[data-theme="dark"] .dur-chip.on{color:#F4E9EE}
+.dur-custom{width:92px;padding:9px 12px;border-radius:12px;border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-weight:700;font-variant-numeric:tabular-nums}
+.break-sug{font-size:13px;color:var(--text3)}
+.focus-big{font-size:44px}
+/* ============ forms ============ */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:13px;font-weight:800;color:var(--text2)}
+.field label .opt{font-weight:600;color:var(--text3)}
+.input,select.input,textarea.input{font:inherit;font-size:14.5px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);transition:border-color .15s,box-shadow .15s;width:100%}
+.input:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-soft)}
+textarea.input{min-height:76px;resize:vertical}
+textarea.short{min-height:56px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ob-chip{padding:10px 16px;border-radius:999px;border:1.5px solid var(--border2);font-weight:700;font-size:14px;background:var(--card);color:var(--text2);transition:.15s}
+.ob-chip:hover{border-color:var(--pink)}
+.ob-chip.on{background:var(--pink-soft);border-color:var(--pink);color:var(--rose)}
+[data-theme="dark"] .ob-chip.on{color:#F4E9EE}
+.ob-chip.sm{padding:7px 13px;font-size:13px}
+.ms-item{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:8px 8px 8px 14px;font-size:14px;margin-bottom:6px}
+.ms-add{display:flex;gap:8px}
+.ms-add .input{flex:1}
+/* ============ modal / toast / pill ============ */
+.modal-overlay{position:fixed;inset:0;background:rgba(42,22,32,.42);backdrop-filter:blur(3px);z-index:200;display:flex;align-items:center;justify-content:center;padding:18px;animation:fade .2s}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:24px;max-width:620px;width:100%;max-height:88vh;overflow:auto;padding:26px 26px 22px;box-shadow:var(--shadow-lg);animation:popIn .25s cubic-bezier(.2,.9,.3,1.15)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-head h3{font-size:19px;font-weight:800}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.confirm-msg{color:var(--text2)}
+#toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:260;align-items:flex-end;pointer-events:none}
+.toast{background:var(--toast-bg);color:var(--toast-fg);border-radius:14px;padding:12px 18px;font-size:14px;font-weight:700;max-width:340px;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(12px);transition:.3s}
+.toast.show{opacity:1;transform:none}
+#minipill{position:fixed;bottom:22px;right:22px;z-index:100}
+.pill{display:flex;align-items:center;gap:12px;background:var(--card);border:1.5px solid var(--pink);border-radius:999px;padding:8px 8px 8px 18px;box-shadow:var(--shadow-lg);cursor:pointer;transition:transform .15s}
+.pill:hover{transform:translateY(-2px)}
+.pill-label{font-size:10.5px;font-weight:800;letter-spacing:.16em;color:var(--rose)}
+.pill-clock{font-family:'Plus Jakarta Sans';font-weight:800;font-size:20px;font-variant-numeric:tabular-nums}
+.pill-btn{width:38px;height:38px;border-radius:50%;background:var(--pink-soft);color:var(--rose);display:flex;align-items:center;justify-content:center}
+/* ============ charts ============ */
+.wchart{display:flex;gap:8px;align-items:stretch}
+.wcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:2px 0;border-radius:10px;transition:.15s}
+.wcol:hover{background:var(--card2)}
+.wval{font-size:11px;font-weight:800;color:var(--text3);height:15px;font-variant-numeric:tabular-nums}
+.wbar-wrap{height:110px;width:100%;max-width:36px;display:flex;align-items:flex-end;background:var(--card2);border-radius:9px;overflow:hidden;margin:0 auto}
+.wbar{width:100%;border-radius:9px;background:var(--pink2);transform-origin:bottom;animation:grow .55s ease both}
+.wbar.today{background:var(--rose)}
+.wcol.sel .wbar{background:var(--rose);box-shadow:inset 0 0 0 2px var(--gold)}
+.wlabel{font-size:11px;color:var(--text3);font-weight:700}
+.chart-detail{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);font-size:13px;color:var(--text2);line-height:1.6}
+/* heatmap */
+.hm-scroll{overflow-x:auto;padding-bottom:6px}
+.hm{display:flex;gap:4px;min-width:max-content}
+.hm-wd{display:grid;grid-template-rows:repeat(7,12px);gap:4px;font-size:9px;color:var(--text3);align-items:center;padding-top:18px;font-weight:700}
+.hm-col{display:flex;flex-direction:column;gap:4px}
+.hm-mo{height:14px;font-size:10px;color:var(--text3);font-weight:700}
+.hm-days{display:grid;grid-template-rows:repeat(7,12px);gap:4px}
+.hm-cell{width:12px;height:12px;border-radius:3px;border:none;padding:0;transition:transform .12s}
+.hm-cell:hover{transform:scale(1.35)}
+.hm-cell.future{background:transparent;border:1px dashed var(--border);cursor:default}
+.hm-cell.lv0{background:var(--lv0)}.hm-cell.lv1{background:var(--lv1)}.hm-cell.lv2{background:var(--lv2)}.hm-cell.lv3{background:var(--lv3)}.hm-cell.lv4{background:var(--lv4)}
+.hm-legend{display:flex;align-items:center;gap:5px;margin-top:12px;font-size:11.5px;color:var(--text3);font-weight:700}
+.hm-legend .hm-cell{cursor:default}
+.hm-legend .hm-cell:hover{transform:none}
+/* subject bars */
+.sb-row{display:grid;grid-template-columns:110px 1fr 64px;gap:12px;align-items:center;margin-bottom:11px}
+.sb-name{font-weight:800;font-size:13.5px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sb-tag{font-size:10px;font-weight:800;color:var(--terra);background:var(--terra-soft);padding:2px 7px;border-radius:999px;white-space:nowrap}
+.sb-track{height:9px;border-radius:5px;background:var(--card2);overflow:hidden}
+.sb-bar{height:100%;border-radius:5px;background:var(--pink);animation:growW .6s ease both;transform-origin:left}
+.sb-val{font-size:13px;font-weight:800;color:var(--text2);text-align:right;font-variant-numeric:tabular-nums}
+.sb-zero{margin-top:6px}
+/* stats */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:13px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px 16px;box-shadow:var(--shadow)}
+.stat .v{font-family:'Plus Jakarta Sans';font-weight:800;font-size:22px;display:flex;align-items:baseline;gap:5px}
+.stat .l{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.stat .s{font-size:12px;color:var(--text3);margin-top:2px}
+/* ============ goals / journey ============ */
+.goal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;margin-bottom:34px}
+.goal{display:flex;flex-direction:column;gap:13px}
+.goal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.goal-head h3{font-size:17px;font-weight:800}
+.goal-desc{color:var(--text2);font-size:13.5px}
+.goal-prog{display:flex;align-items:center;gap:16px}
+.goal-prog .gp-txt{flex:1;display:flex;flex-direction:column;gap:3px}
+.gp-big{font-family:'Plus Jakarta Sans';font-weight:800;font-size:15px}
+.gp-sub{font-size:12.5px;color:var(--text3)}
+.goal-ms{display:flex;flex-direction:column;gap:5px}
+.gms{display:flex;gap:9px;align-items:center;font-size:13.5px;color:var(--text2);cursor:pointer}
+.gms .task-check{width:20px;height:20px;margin:0}
+.gms.done span{color:var(--text3);text-decoration:line-through}
+.reward{border:1.5px dashed var(--gold);background:var(--gold-soft);border-radius:14px;padding:12px 14px;display:flex;gap:11px;align-items:center;font-size:13.5px}
+.reward .ric{color:var(--gold);display:flex}
+.reward b{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold)}
+.goal-achieved{background:var(--gold-soft);border:1px solid var(--gold);border-radius:14px;padding:14px;text-align:center}
+.goal-achieved .ga-t{font-family:'Plus Jakarta Sans';font-weight:800;color:var(--gold);font-size:16px}
+.goal-achieved p{font-size:13.5px;color:var(--text2)}
+.timeline{position:relative;margin-top:8px}
+.tl-stage{position:relative;padding:0 0 16px 36px}
+.tl-stage::before{content:'';position:absolute;left:11px;top:28px;bottom:0;width:2px;background:var(--border)}
+.tl-stage:last-child::before{display:none}
+.tl-dot{position:absolute;left:0;top:5px;width:24px;height:24px;border-radius:50%;border:2.5px solid var(--border2);background:var(--card);display:flex;align-items:center;justify-content:center;color:transparent}
+.tl-stage.done .tl-dot{background:var(--rose);border-color:var(--rose);color:#fff}
+.tl-stage.done .tl-dot .ic{width:12px;height:12px}
+.tl-stage.current .tl-dot{border-color:var(--rose);box-shadow:0 0 0 5px var(--pink-soft)}
+.tl-body{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.tl-name{font-weight:800;font-family:'Plus Jakarta Sans';font-size:14.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tl-meta{font-size:12px;color:var(--text3);margin-top:3px}
+.tl-bar{width:130px;height:6px;border-radius:3px;background:var(--card);overflow:hidden;border:1px solid var(--border)}
+.tl-bar i{display:block;height:100%;background:var(--pink);border-radius:3px}
+.status-pill{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.05em}
+.status-pill.not{background:var(--card2);color:var(--text3)}
+.status-pill.inp{background:var(--pink-soft);color:var(--rose)}
+[data-theme="dark"] .status-pill.inp{color:#F4E9EE}
+.status-pill.done{background:var(--rose);color:#fff}
+[data-theme="dark"] .status-pill.done{color:#2A1B22}
+.tl-stage.final .tl-name{color:var(--gold)}
+.tl-actions{display:flex;gap:2px}
+/* ============ achievements ============ */
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:14px}
+.ach{display:flex;flex-direction:column;gap:8px;padding:18px;position:relative;overflow:hidden}
+.ach.locked{opacity:.78}
+.ach .ach-ic{font-size:26px}
+.ach h4{font-size:15px;font-weight:800;display:flex;align-items:center;gap:7px}
+.ach p{font-size:12.5px;color:var(--text2);flex:1}
+.ach .ach-bar{height:6px;border-radius:3px;background:var(--card2);overflow:hidden}
+.ach .ach-bar i{display:block;height:100%;border-radius:3px;background:var(--pink2);transition:width .6s}
+.ach.unlocked .ach-bar i{background:var(--gold)}
+.ach .ach-prog{font-size:12px;font-weight:800;color:var(--text3)}
+.ach.unlocked{border-color:var(--gold)}
+.ach.unlocked::after{content:'✓';position:absolute;top:12px;right:14px;color:var(--gold);font-weight:800}
+.ach.unlocked .ach-prog{color:var(--gold)}
+/* ============ calendar ============ */
+.cal-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-head h3{font-size:17px;font-weight:800;text-transform:capitalize}
+.cal-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
+.cal-dow span{text-align:center;font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-day{aspect-ratio:1/.92;border-radius:13px;border:1.5px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:.15s;font-variant-numeric:tabular-nums}
+.cal-day:hover{background:var(--card2)}
+.cal-day.other{opacity:.32}
+.cal-day.today{border-color:var(--pink)}
+.cal-day.sel{background:var(--pink-soft);border-color:var(--pink)}
+.cd-n{font-weight:700;font-size:14px}
+.cd-act{width:24px;height:4px;border-radius:2px;background:var(--lv0)}
+.cd-act.lv1{background:var(--lv1)}.cd-act.lv2{background:var(--lv2)}.cd-act.lv3{background:var(--lv3)}.cd-act.lv4{background:var(--lv4)}
+.cd-act.lv0{background:var(--border)}
+.cal-detail-row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--border);font-size:14px}
+.cal-detail-row b{font-family:'Plus Jakarta Sans'}
+/* ============ reflections ============ */
+.refl-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:18px 0;align-items:start}
+.stars{display:flex;gap:6px}
+.star{font-size:28px;color:var(--border2);transition:.15s;line-height:1}
+.star:hover{transform:scale(1.15)}
+.star.on{color:var(--gold)}
+.refl-past{display:flex;flex-direction:column;gap:12px}
+.refl-item .ri-date{font-weight:800;font-size:13px;color:var(--rose)}
+.refl-item .ri-stars{color:var(--gold);font-size:13px;letter-spacing:2px}
+.refl-item p{font-size:13.5px;color:var(--text2);margin-top:4px}
+.tomorrow-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed var(--border);flex-wrap:wrap}
+.tomorrow-row .tr-t{font-weight:700;font-size:14px}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.sg-item{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+.sg-item b{font-family:'Plus Jakarta Sans';font-size:17px;display:block}
+.sg-item span{font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+/* ============ settings ============ */
+.settings-stack{display:flex;flex-direction:column;gap:18px;max-width:680px}
+.radio-row{display:flex;gap:10px;flex-wrap:wrap}
+.radio-pill{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1.5px solid var(--border2);font-weight:700;cursor:pointer;font-size:14px}
+.radio-pill input{accent-color:var(--rose)}
+.radio-pill:has(input:checked){border-color:var(--pink);background:var(--pink-soft);color:var(--rose)}
+[data-theme="dark"] .radio-pill:has(input:checked){color:#F4E9EE}
+/* ============ onboarding ============ */
+#onboard{position:fixed;inset:0;z-index:400;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:22px;overflow:auto}
+.ob-deco{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;pointer-events:none}
+.ob-deco.a{width:420px;height:420px;background:var(--pink-soft);top:-120px;right:-100px}
+.ob-deco.b{width:360px;height:360px;background:var(--gold-soft);bottom:-140px;left:-110px}
+.ob-card{position:relative;max-width:620px;width:100%;background:var(--card);border:1px solid var(--border);border-radius:28px;padding:38px 38px 30px;box-shadow:var(--shadow-lg);animation:fadeUp .4s ease}
+.ob-dots{display:flex;gap:7px;justify-content:center;margin:22px 0 4px}
+.ob-dot{width:8px;height:8px;border-radius:99px;background:var(--border2);transition:.3s}
+.ob-dot.on{background:var(--pink);width:24px}
+.ob-step{animation:fadeUp .35s ease}
+.ob-title{font-size:clamp(26px,4.5vw,36px);font-weight:600;line-height:1.15;margin-bottom:10px}
+.ob-sub{color:var(--text2);font-size:15.5px;margin-bottom:22px}
+.ob-tag{font-size:10.5px;font-weight:800;letter-spacing:.22em;color:var(--pink);text-transform:uppercase;margin-bottom:18px}
+.ob-btns{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:12px}
+.ob-err{color:var(--terra);font-size:13px;font-weight:700;min-height:18px;margin-top:8px}
+.ob-chips{display:flex;flex-wrap:wrap;gap:9px}
+.ob-recap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 4px}
+.ob-recap div{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+.ob-recap b{display:block;font-family:'Plus Jakarta Sans';font-size:15px}
+.ob-recap span{font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+/* ============ sheet / bottom nav ============ */
+.sheet{position:fixed;inset:0;z-index:140;display:none}
+.sheet.open{display:block}
+.sheet-bg{position:absolute;inset:0;background:rgba(42,22,32,.4)}
+.sheet-panel{position:absolute;bottom:0;left:0;right:0;background:var(--bg2);border-radius:26px 26px 0 0;padding:20px 18px calc(22px + env(safe-area-inset-bottom));animation:slideUp .28s cubic-bezier(.2,.9,.3,1)}
+.sheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.streak-chip{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:800;white-space:nowrap}
+/* ============ confetti ============ */
+#confetti-root{position:fixed;inset:0;pointer-events:none;z-index:300;overflow:hidden}
+.confetti-p{position:absolute;top:-14px;border-radius:2.5px;animation:confFall var(--d) ease-in var(--dl) forwards;opacity:0}
+/* ============ ambient floaters ============ */
+#ambient{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+.amb{position:absolute;bottom:-24px;color:var(--pink2);animation:ambFloat var(--d) linear var(--dl) infinite;pointer-events:none;user-select:none}
+@keyframes ambFloat{0%{transform:translate(0,0) rotate(0);opacity:0}10%{opacity:.4}80%{opacity:.3}100%{transform:translate(var(--sw),-105vh) rotate(160deg);opacity:0}}
+/* ============ Mochi: fully calm 2D companion (no idle animation) ============ */
+#companion{position:fixed;left:0;top:0;z-index:95;will-change:transform}
+#companion.dragging{z-index:150}
+.comp{position:relative;display:block;width:108px;padding:0;background:none;border:none;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent}
+.comp:active{cursor:grabbing}
+.comp-shadow{position:absolute;left:50%;bottom:-3px;transform:translateX(-50%);width:64px;height:11px;border-radius:50%;background:rgba(176,84,112,.13)}
+#companion.dragging .comp-shadow{opacity:.35}
+/* NO breathing, NO drop-shadow, NO idle body animation — perfectly still when idle */
+.comp-svg{position:relative;display:block;width:100%;height:auto}
+/* walking: body stays level; only feet, ears, arms, bow move subtly (1.8s, small) */
+.foot{transform-box:fill-box}
+.comp.moving .foot-l{animation:stepL 1.8s ease-in-out infinite}
+.comp.moving .foot-r{animation:stepR 1.8s ease-in-out infinite}
+@keyframes stepL{0%,100%{transform:translateX(0)}50%{transform:translateX(4.5px)}}
+@keyframes stepR{0%,100%{transform:translateX(4.5px)}50%{transform:translateX(0)}}
+.arm{transform-box:fill-box;transform-origin:50% 12%;transition:transform .9s cubic-bezier(.34,1.3,.4,1)}
+.arm-l{transform:rotate(-7deg)}
+.arm-r{transform:rotate(7deg)}
+.comp.moving .arm-l{animation:swingL 1.8s ease-in-out infinite}
+.comp.moving .arm-r{animation:swingR 1.8s ease-in-out infinite}
+@keyframes swingL{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(-11deg)}}
+@keyframes swingR{0%,100%{transform:rotate(3deg)}50%{transform:rotate(11deg)}}
+.ear{transform-box:fill-box;transform-origin:50% 96%;transition:transform .7s ease}
+.comp.moving .ear-l{animation:earSwayL 1.8s ease-in-out infinite}
+.comp.moving .ear-r{animation:earSwayR 1.8s ease-in-out infinite}
+@keyframes earSwayL{0%,100%{transform:rotate(0)}50%{transform:rotate(-3.5deg)}}
+@keyframes earSwayR{0%,100%{transform:rotate(0)}50%{transform:rotate(3.5deg)}}
+.bow{transform-box:fill-box;transform-origin:50% 80%;transition:transform .7s ease}
+.comp.moving .bow{animation:bowBob 1.8s ease-in-out infinite}
+@keyframes bowBob{0%,100%{transform:rotate(0)}50%{transform:rotate(3deg)}}
+/* sleeping: droopy ears + soft dim */
+#companion.asleep .ear-l{transform:rotate(-14deg)}
+#companion.asleep .ear-r{transform:rotate(14deg)}
+#companion.asleep .comp-svg{opacity:.94}
+/* celebrations only */
+.comp.wiggle .ear-l{animation:earWigL 1.1s ease}
+.comp.wiggle .ear-r{animation:earWigR 1.1s ease}
+@keyframes earWigL{0%,100%{transform:rotate(0)}30%{transform:rotate(-9deg)}65%{transform:rotate(5deg)}}
+@keyframes earWigR{0%,100%{transform:rotate(0)}30%{transform:rotate(9deg)}65%{transform:rotate(-5deg)}}
+.tail{transform-box:fill-box;transform-origin:40% 50%}
+.comp.wiggle .tail{animation:tailW 1.1s ease}
+@keyframes tailW{0%,100%{transform:scale(1)}40%{transform:scale(1.16,.92)}70%{transform:scale(.96,1.03)}}
+.comp.hugging .arm-l{transform:rotate(76deg)}
+.comp.hugging .arm-r{transform:rotate(-76deg)}
+.comp.hop .comp-svg{animation:compHop 1.05s cubic-bezier(.3,1.2,.5,1)}
+@keyframes compHop{0%,100%{transform:translateY(0)}40%{transform:translateY(-9px)}}
+.comp.squish .comp-svg{animation:compSquish .6s ease}
+@keyframes compSquish{0%{transform:scale(1)}40%{transform:scale(1.05,.95)}100%{transform:scale(1)}}
+.comp.spin .comp-svg{animation:compSpin .9s cubic-bezier(.4,.1,.3,1)}
+@keyframes compSpin{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(1.05)}100%{transform:rotate(360deg) scale(1)}}
+/* face: only a slow blink */
+.ce-open{transform-box:fill-box;transform-origin:center;animation:compBlink 6.5s infinite}
+@keyframes compBlink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.06)}98%{transform:scaleY(1)}}
+.pupils{transition:transform .6s ease}
+.nose{transform-box:fill-box;transform-origin:center}
+.comp.twitch .nose{animation:noseTw .5s ease}
+@keyframes noseTw{0%,100%{transform:scale(1)}30%{transform:scale(1.25,.85)}60%{transform:scale(.95,1.05)}}
+.ce-happy,.ce-sleepy,.ce-brows,.cm-open,.cm-flat,.sweat{display:none}
+.comp.st-happy .ce-open,.comp.st-sleepy .ce-open,.comp.st-rest .ce-open{display:none}
+.comp.st-happy .ce-happy{display:block}
+.comp.st-sleepy .ce-sleepy,.comp.st-rest .ce-sleepy{display:block}
+.comp.st-focus .ce-brows,.comp.st-focus .sweat{display:block}
+.comp.st-focus .cm-smile{display:none}.comp.st-focus .cm-flat{display:block}
+.comp.st-happy .cm-smile{display:none}.comp.st-happy .cm-open{display:block}
+.comp.st-sleepy .cm-smile{display:none}.comp.st-sleepy .cm-flat{display:block}
+.sweat{transform-box:fill-box}
+.comp.st-focus .sweat{animation:sweatDrop 2.8s ease-in infinite}
+@keyframes sweatDrop{0%{transform:translateY(-3px);opacity:0}30%{opacity:.9}100%{transform:translateY(10px);opacity:0}}
+/* speech bubble with chat buttons */
+.comp-bubble{position:absolute;left:0;bottom:calc(100% + 12px);width:max-content;max-width:min(250px,76vw);background:var(--card);border:1.5px solid var(--border2);border-radius:14px;padding:9px 13px;font-size:12.5px;font-weight:800;color:var(--text);box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:.3s;pointer-events:none;z-index:2}
+.comp-bubble.show{opacity:1;transform:translateY(0)}
+.comp-bubble.interactive{pointer-events:auto}
+.comp-bubble::after{content:'';position:absolute;bottom:-6.5px;left:26px;width:11px;height:11px;background:var(--card);border-right:1.5px solid var(--border2);border-bottom:1.5px solid var(--border2);transform:rotate(45deg)}
+.comp-bubble.flip{left:auto;right:0}
+.comp-bubble.flip::after{left:auto;right:26px}
+.cb-btns{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.cb-btns button{font:inherit;font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:999px;background:var(--pink-soft);color:var(--rose);border:1px solid var(--pink);cursor:pointer;transition:.15s}
+[data-theme="dark"] .cb-btns button{color:#F4E9EE}
+.cb-btns button:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.cb-btns button:active{transform:scale(.95)}
+.zzz{position:absolute;top:-12px;right:-2px;width:40px;height:58px;display:none;pointer-events:none}
+#companion.asleep .zzz{display:block}
+.zzz span{position:absolute;right:2px;bottom:40px;font-family:'Plus Jakarta Sans';font-weight:800;font-size:12px;color:var(--text3);animation:zfloat 3.6s ease-out infinite}
+.zzz span:nth-child(2){animation-delay:1.2s;font-size:15px}
+.zzz span:nth-child(3){animation-delay:2.4s;font-size:18px}
+@keyframes zfloat{0%{transform:translate(0,0) scale(.8);opacity:0}30%{opacity:.85}100%{transform:translate(14px,-38px) scale(1.1);opacity:0}}
+.hpop{position:absolute;bottom:70px;color:#EE7D9B;font-size:15px;pointer-events:none;z-index:2;animation:hpop 1.9s ease-out forwards}
+@keyframes hpop{0%{transform:translate(0,0) scale(.6);opacity:0}15%{opacity:.95}100%{transform:translate(var(--hx,0),-84px) scale(1.1) rotate(var(--hr,0deg));opacity:0}}
+/* ============ animations ============ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}}
+@keyframes popIn{from{opacity:0;transform:scale(.95) translateY(8px)}}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes grow{from{transform:scaleY(0)}}
+@keyframes growW{from{transform:scaleX(0)}}
+@keyframes slideUp{from{transform:translateY(100%)}}
+@keyframes confFall{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:.85;transform:translate(var(--dx),106vh) rotate(560deg)}}
+/* ============ responsive ============ */
+@media(max-width:960px){
+  .dash-grid,.cal-layout,.refl-grid{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .page{padding:20px 18px 190px}
+  .topbar{display:flex;position:sticky;top:0;z-index:60;background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 16px;align-items:center;justify-content:space-between;gap:10px}
+  .topbar-right{display:flex;align-items:center;gap:6px}
+  .bottomnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:90;justify-content:space-around}
+  .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:var(--text3);padding:7px 2px;border-radius:10px;transition:.15s}
+  .bn-item:active{transform:scale(.92)}
+  .bn-item.active{color:var(--rose)}
+  #toasts{left:16px;right:16px;top:72px;bottom:auto;align-items:center}
+  #minipill{bottom:calc(82px + env(safe-area-inset-bottom));right:12px;left:auto}
+  .pill{padding:6px 6px 6px 14px}
+  .pill-clock{font-size:17px}
+  .frow{grid-template-columns:1fr}
+  .sb-row{grid-template-columns:88px 1fr 56px}
+  .comp{width:78px}
+  .hpop{bottom:52px;font-size:13px}
+  .comp-bubble{max-width:min(220px,72vw)}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important;scroll-behavior:auto!important}
+  .confetti-p{display:none}
+  #ambient{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- first-run onboarding -->
+<div id="onboard" class="hidden"></div>
+
+<!-- app shell -->
+<div id="app" class="app hidden">
+  <div id="ambient"></div>
+
+  <!-- Mochi: calm 2D study companion -->
+  <div id="companion">
+    <div class="comp-bubble" id="comp-bubble"></div>
+    <div class="zzz"><span>z</span><span>z</span><span>z</span></div>
+    <button class="comp st-idle" id="comp-body" type="button" title="Tap to chat · drag to move" aria-label="Mochi the study bunny. Tap to chat, drag to move.">
+      <div class="comp-shadow"></div>
+      <svg class="comp-svg" viewBox="0 0 150 140" aria-hidden="true">
+        <g class="tail"><circle cx="121" cy="98" r="12" fill="#FFF5F9" stroke="#EFB0C6" stroke-width="3"/></g>
+        <g class="ear ear-l">
+          <ellipse cx="56" cy="30" rx="12" ry="27" fill="#FAC4D6" stroke="#EFB0C6" stroke-width="3" transform="rotate(-9 56 30)"/>
+          <ellipse cx="56" cy="34" rx="6" ry="18" fill="#F7AEC8" transform="rotate(-9 56 30)"/>
+        </g>
+        <g class="ear ear-r">
+          <ellipse cx="94" cy="30" rx="12" ry="27" fill="#FAC4D6" stroke="#EFB0C6" stroke-width="3" transform="rotate(9 94 30)"/>
+          <ellipse cx="94" cy="34" rx="6" ry="18" fill="#F7AEC8" transform="rotate(9 94 30)"/>
+        </g>
+        <ellipse cx="75" cy="86" rx="46" ry="36" fill="#FAC4D6" stroke="#EFB0C6" stroke-width="3"/>
+        <ellipse cx="75" cy="97" rx="25" ry="16" fill="#FDDFEA"/>
+        <ellipse class="foot foot-l" cx="56" cy="118" rx="13" ry="7" fill="#FAC4D6" stroke="#EFB0C6" stroke-width="3"/>
+        <ellipse class="foot foot-r" cx="94" cy="118" rx="13" ry="7" fill="#FAC4D6" stroke="#EFB0C6" stroke-width="3"/>
+        <g class="arm arm-l"><ellipse cx="30" cy="100" rx="7.5" ry="11" fill="#FAC4D6" stroke="#EFB0C6" stroke-width="3"/></g>
+        <g class="arm arm-r"><ellipse cx="120" cy="100" rx="7.5" ry="11" fill="#FAC4D6" stroke="#EFB0C6" stroke-width="3"/></g>
+        <g class="bow">
+          <ellipse cx="65" cy="52" rx="9" ry="6.5" fill="#F583AC" stroke="#E76E9E" stroke-width="2.5" transform="rotate(-16 65 52)"/>
+          <ellipse cx="85" cy="52" rx="9" ry="6.5" fill="#F583AC" stroke="#E76E9E" stroke-width="2.5" transform="rotate(16 85 52)"/>
+          <ellipse cx="75" cy="53" rx="5" ry="4.5" fill="#F692B8" stroke="#E76E9E" stroke-width="2.5"/>
+        </g>
+        <ellipse cx="45" cy="88" rx="7.5" ry="4.8" fill="#F79FBE" opacity=".7"/>
+        <ellipse cx="105" cy="88" rx="7.5" ry="4.8" fill="#F79FBE" opacity=".7"/>
+        <g class="ce-brows" stroke="#56363F" stroke-width="3" stroke-linecap="round">
+          <path d="M49 66 L62 70"/><path d="M101 66 L88 70"/>
+        </g>
+        <g class="ce ce-open">
+          <g class="pupils" id="comp-pupils">
+            <ellipse cx="60" cy="78" rx="5.4" ry="6.4" fill="#56363F"/>
+            <ellipse cx="90" cy="78" rx="5.4" ry="6.4" fill="#56363F"/>
+            <circle cx="61.8" cy="75.8" r="2.1" fill="#fff"/>
+            <circle cx="91.8" cy="75.8" r="2.1" fill="#fff"/>
+          </g>
+        </g>
+        <g class="ce ce-happy" fill="none" stroke="#56363F" stroke-width="3.2" stroke-linecap="round">
+          <path d="M53 80 Q60 72.5 67 80"/><path d="M83 80 Q90 72.5 97 80"/>
+        </g>
+        <g class="ce ce-sleepy" fill="none" stroke="#56363F" stroke-width="3.2" stroke-linecap="round">
+          <path d="M53 77 Q60 83 67 77"/><path d="M83 77 Q90 83 97 77"/>
+        </g>
+        <ellipse class="nose" cx="75" cy="85" rx="4" ry="3" fill="#EF7FA4"/>
+        <path class="cm cm-smile" d="M68 91 Q71.5 95 75 91 Q78.5 95 82 91" fill="none" stroke="#56363F" stroke-width="2.6" stroke-linecap="round"/>
+        <path class="cm cm-open" d="M69 91 Q75 100 81 91 Z" fill="#56363F"/>
+        <path class="cm cm-flat" d="M70 92.5 L80 92.5" fill="none" stroke="#56363F" stroke-width="2.6" stroke-linecap="round"/>
+        <path class="sweat" d="M113 58 q4 6 0 9 q-4 -3 0 -9" fill="#9CC9E8"/>
+      </svg>
+    </button>
+  </div>
+
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-ic" id="logo-ic"></div>
+      <div><div class="logo-name">Bloom</div><div class="logo-tag">cozy placement planner</div></div>
+    </div>
+    <nav class="side-nav" id="side-nav"></nav>
+    <div class="side-foot">
+      <div class="side-streak" id="side-streak"></div>
+      <div class="side-foot-row"><button class="btn-icon btn-ghost theme-toggle-btn" data-action="theme-toggle" aria-label="Toggle theme"></button></div>
+      <div class="side-tag">Tap Mochi for a hug ♡</div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div class="logo" style="padding:0"><div class="logo-ic" style="width:32px;height:32px" id="logo-ic2"></div><div class="logo-name" style="font-size:16px">Bloom</div></div>
+      <div class="topbar-right">
+        <span id="top-streak" class="streak-chip"></span>
+        <button class="btn-icon btn-ghost theme-toggle-btn" data-action="theme-toggle" aria-label="Toggle theme"></button>
+        <button class="btn-icon btn-ghost" data-action="more-open" aria-label="More" id="more-btn"></button>
+      </div>
+    </header>
+    <main id="page" class="page"></main>
+  </div>
+  <nav class="bottomnav" id="bottom-nav"></nav>
+</div>
+
+<!-- mobile more sheet -->
+<div class="sheet" id="sheet">
+  <div class="sheet-bg" data-action="sheet-close"></div>
+  <div class="sheet-panel"><div class="sheet-grid" id="sheet-grid"></div></div>
+</div>
+
+<div id="minipill"></div>
+<div id="toasts"></div>
+<div id="modal-root"></div>
+<div id="confetti-root"></div>
+
+<script>
+'use strict';
+/* ================= helpers ================= */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const pad=n=>String(n).padStart(2,'0');
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const round1=v=>Math.round(v*10)/10;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const reducedMotion=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dateKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayKey=()=>dateKey(new Date());
+const tomorrowKey=()=>{const d=new Date();d.setDate(d.getDate()+1);return dateKey(d);};
+const keyToDate=k=>{const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d);};
+const diffKeys=(a,b)=>Math.round((keyToDate(b)-keyToDate(a))/864e5);
+const fmtMin=m=>{m=Math.round(m);if(m<60)return m+'m';const h=Math.floor(m/60),r=m%60;return r?`${h}h ${r}m`:`${h}h`;};
+const fmtClock=s=>{s=Math.max(0,Math.round(s));return `${Math.floor(s/60)}:${pad(s%60)}`;};
+const fmtDateLong=k=>keyToDate(k).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+const fmtDateShort=k=>keyToDate(k).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+const niceDate=k=>k===todayKey()?'Today':k===tomorrowKey()?'Tomorrow':fmtDateShort(k);
+const dayOfYear=()=>{const n=new Date();return Math.floor((n-new Date(n.getFullYear(),0,0))/864e5);};
+function mondayOf(d){const x=new Date(d);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);x.setHours(0,0,0,0);return x;}
+function weekKeys(){const m=mondayOf(new Date());const out=[];for(let i=0;i<7;i++){const d=new Date(m);d.setDate(m.getDate()+i);out.push(dateKey(d));}return out;}
+function monthKeys(){const n=new Date(),y=n.getFullYear(),m=n.getMonth(),days=new Date(y,m+1,0).getDate(),out=[];for(let i=1;i<=days;i++)out.push(dateKey(new Date(y,m,i)));return out;}
+
+/* ================= icons ================= */
+const IC={
+home:'<path d="M3 10.8 12 3l9 7.8V20a1 1 0 0 1-1 1h-5.5v-6.5h-5V21H4a1 1 0 0 1-1-1z"/>',
+tasks:'<path d="M4 5.5h2v2H4zM4 11h2v2H4zM4 16.5h2v2H4z"/><path d="M9.5 6.5H20M9.5 12H20M9.5 17.5H20"/>',
+timer:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 10.2v3.6l2.4 1.8M9.5 2.5h5"/>',
+target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>',
+chart:'<path d="M5 20v-7M11 20V5M17 20v-10M3 20h18"/>',
+trophy:'<path d="M8 21h8M12 16.5V21M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4c0 3 1.4 4.6 3.2 4.9M17 6h3c0 3-1.4 4.6-3.2 4.9"/>',
+calendar:'<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8.5 3v4M15.5 3v4"/>',
+reflect:'<path d="M5 4h10.5L19 7.5V20H5z"/><path d="M9 10h6M9 14h6"/>',
+settings:'<path d="M4 7h9M17.5 7H20M4 17h4M12.5 17H20M4 12h13"/><circle cx="15" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+play:'<path d="M8 5.5v13l11-6.5z" fill="currentColor" stroke="none"/>',
+pause:'<path d="M9 5.5v13M15 5.5v13" stroke-width="2.6"/>',
+check:'<path d="M4.5 12.5l5 5L19.5 6.5"/>',
+pencil:'<path d="M4 20l1.2-4.2L16.6 4.4a2 2 0 0 1 2.9 2.9L8.2 18.8 4 20z"/>',
+trash:'<path d="M4 7h16M9.5 7V5h5v2M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/>',
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>',
+moon:'<path d="M20 13.5A8 8 0 1 1 10.5 4 6.5 6.5 0 0 0 20 13.5z"/>',
+chevL:'<path d="M14.5 6l-6 6 6 6"/>',chevR:'<path d="M9.5 6l6 6-6 6"/>',
+chevU:'<path d="M6 14.5l6-6 6 6"/>',chevD:'<path d="M6 9.5l6 6 6-6"/>',
+x:'<path d="M6 6l12 12M18 6L6 18"/>',
+dots:'<circle cx="5" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.7" fill="currentColor" stroke="none"/>',
+gift:'<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M4 10h16M12 6.5V20M12 6.5C10 6.5 7.5 6 7.5 4.5S10 3 12 6.5zM12 6.5c2 0 4.5-.5 4.5-2S14 3 12 6.5z"/>',
+lock:'<rect x="5.5" y="10.5" width="13" height="9" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>',
+heart:'<path d="M12 20.3C6.6 16.4 3.2 13.2 3.2 9.7 3.2 7.1 5.1 5.2 7.5 5.2c1.7 0 3.2 1 4.5 2.9 1.3-1.9 2.8-2.9 4.5-2.9 2.4 0 4.3 1.9 4.3 4.5 0 3.5-3.4 6.7-8.8 10.6z"/>',
+arrowR:'<path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/>',
+};
+const icon=(n,cls='')=>`<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]||''}</svg>`;
+
+/* ================= state ================= */
+const KEY='sprout.planner.v1';
+let state=null;
+const defaultState=()=>({version:1,user:null,tasks:[],goals:[],sessions:[],reflections:{},achievements:{},journey:{stages:[]},timer:null});
+function loadState(){
+  try{const raw=localStorage.getItem(KEY);if(!raw)return null;const p=JSON.parse(raw);if(!p||!p.user)return null;return {...defaultState(),...p};}catch(e){return null;}
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+const U=()=>state.user;
+const findTask=id=>state.tasks.find(t=>t.id===id);
+const findGoal=id=>state.goals.find(g=>g.id===id);
+
+/* 32 calm, motivating quotes */
+const QUOTES=[
+ "You don't need to finish everything today. You just need to move forward.",
+ "One focused hour is worth three distracted ones.",
+ "Slow progress is still progress.",
+ "Consistency beats intensity — show up again tomorrow.",
+ "Every problem you solve makes the next one smaller.",
+ "Small steps, taken daily, quietly become distances.",
+ "You are building something, even when it feels slow.",
+ "Discipline is remembering what you want most.",
+ "Trust the hours you've already invested.",
+ "The offer letter is written one focused session at a time.",
+ "Rest is part of the work. So is starting again.",
+ "Compare yourself only to yesterday's you.",
+ "Little by little, a little becomes a lot.",
+ "Study slowly, understand deeply.",
+ "One page a day is 365 pages a year.",
+ "Your future self is watching you right now.",
+ "Progress hides inside boring days.",
+ "Start where you are. Use what you have.",
+ "Done is better than perfect. Started is better than done.",
+ "Focus is deciding what not to do.",
+ "Quiet work, loud results.",
+ "It always seems impossible until it's done.",
+ "Slow study is still study.",
+ "Every expert was once a beginner who refused to quit.",
+ "The syllabus is finite. Your effort compounds.",
+ "You are allowed to be both a masterpiece and a work in progress.",
+ "Care about your future enough to work for it now.",
+ "Small daily improvements create staggering long-term results.",
+ "The exam tests memory. The job tests consistency.",
+ "Discipline is self-love in work clothes.",
+ "You don't have to be great to start. You have to start to be great.",
+ "Energy flows where attention goes — guard it kindly.",
+];
+const dayQuote=()=>QUOTES[dayOfYear()%QUOTES.length];
+
+/* ================= derived data ================= */
+const sessionsOn=k=>state.sessions.filter(s=>s.dateKey===k);
+const minutesOn=k=>sessionsOn(k).reduce((a,s)=>a+s.focusedSec,0)/60;
+const todayMinutes=()=>minutesOn(todayKey());
+const dailyGoalMin=()=>U().dailyHours*60;
+const todayGoalPct=()=>Math.min(100,todayMinutes()/dailyGoalMin()*100);
+const journeyDay=()=>{const c=new Date(U().createdAt);const a=new Date(c.getFullYear(),c.getMonth(),c.getDate());const n=new Date();const b=new Date(n.getFullYear(),n.getMonth(),n.getDate());return Math.max(1,Math.floor((b-a)/864e5)+1);};
+function studiedMap(){const m={};state.sessions.forEach(s=>{m[s.dateKey]=(m[s.dateKey]||0)+s.focusedSec/60;});return m;}
+function streaks(perDay){
+  const m=perDay||studiedMap();const has=k=>(m[k]||0)>=15;
+  let cur=0;const d=new Date();
+  if(!has(dateKey(d)))d.setDate(d.getDate()-1);
+  while(has(dateKey(d))){cur++;d.setDate(d.getDate()-1);}
+  const keys=Object.keys(m).filter(has).sort();
+  let longest=0,run=0,prev=null;
+  keys.forEach(k=>{if(prev&&diffKeys(prev,k)===1)run++;else run=1;longest=Math.max(longest,run);prev=k;});
+  let goalDays=0;Object.keys(m).forEach(k=>{if(m[k]>=dailyGoalMin())goalDays++;});
+  return {cur,longest,days:keys.length,goalDays};
+}
+function goalProgress(g){
+  if(g.achievedAt)return{pct:100,doneMin:0,targetMin:0,msDone:0,msTotal:g.milestones.length};
+  const targetMin=(+g.targetHours||0)*60;
+  const doneMin=state.sessions.filter(s=>s.goalId===g.id).reduce((a,s)=>a+s.focusedSec,0)/60;
+  if(targetMin>0)return{pct:Math.min(100,doneMin/targetMin*100),doneMin,targetMin};
+  if(g.milestones&&g.milestones.length){const d=g.milestones.filter(m=>m.done).length;return{pct:d/g.milestones.length*100,doneMin,targetMin:0,msDone:d,msTotal:g.milestones.length};}
+  return{pct:0,doneMin,targetMin:0,msDone:0,msTotal:0};
+}
+function stageProgress(st){
+  if(st.status==='done')return 100;
+  const subs=st.subjects||[];if(!subs.length)return 0;
+  const rel=state.tasks.filter(t=>subs.includes(t.subject));
+  if(!rel.length)return 0;
+  return rel.filter(t=>t.completed).length/rel.length*100;
+}
+function computeStats(){
+  const s={};let total=0,longest=0;const subj={},perDay={};
+  state.sessions.forEach(x=>{total+=x.focusedSec;longest=Math.max(longest,x.focusedSec);subj[x.subject]=(subj[x.subject]||0)+x.focusedSec/60;perDay[x.dateKey]=(perDay[x.dateKey]||0)+x.focusedSec/60;});
+  s.totalMin=total/60;s.longestSessionMin=longest/60;s.sessionCount=state.sessions.length;s.subjectMin=subj;s.perDay=perDay;
+  s.todayMin=perDay[todayKey()]||0;
+  s.weekMin=weekKeys().reduce((a,k)=>a+(perDay[k]||0),0);
+  s.monthMin=monthKeys().reduce((a,k)=>a+(perDay[k]||0),0);
+  s.avgDaily=s.totalMin/Math.max(1,journeyDay());
+  s.tasksDone=state.tasks.filter(t=>t.completed).length;
+  s.tasksPending=state.tasks.length-s.tasksDone;
+  const st=streaks(perDay);Object.assign(s,{curStreak:st.cur,longestStreak:st.longest,daysStudied:st.days,goalDays:st.goalDays});
+  s.goalsDone=state.goals.filter(g=>g.achievedAt).length;
+  const dsaGoals=state.goals.filter(g=>(g.subjects||[]).some(x=>/dsa/i.test(x)));
+  if(dsaGoals.length)s.dsaPct=Math.max(...dsaGoals.map(g=>goalProgress(g).pct));
+  else{const dt=state.tasks.filter(t=>/dsa/i.test(t.subject));s.dsaPct=dt.length?dt.filter(t=>t.completed).length/dt.length*100:0;}
+  const n=state.journey.stages.length;
+  s.journeyPct=n?state.journey.stages.filter(x=>x.status==='done').length/n*100:0;
+  return s;
+}
+
+/* ================= achievements ================= */
+const ACH_DEFS=[
+ {id:'first',em:'🌱',name:'First Step',desc:'Complete your first focus session.',cur:s=>s.sessionCount,target:1,fmt:c=>`${Math.min(c,1)} / 1 session`},
+ {id:'streak3',em:'🔥',name:'Getting Consistent',desc:'Study for 3 consecutive days.',cur:s=>s.longestStreak,target:3,fmt:c=>`${Math.min(c,3)} / 3 days`},
+ {id:'streak7',em:'⚡',name:'One Week Strong',desc:'Maintain a 7-day streak.',cur:s=>s.longestStreak,target:7,fmt:c=>`${Math.min(c,7)} / 7 days`},
+ {id:'h10',em:'📚',name:'10 Hours',desc:'Complete 10 hours of focused study.',cur:s=>s.totalMin,target:600,fmt:c=>`${fmtMin(Math.min(c,600))} / 10h`},
+ {id:'tasks50',em:'🎯',name:'50 Tasks',desc:'Complete 50 study tasks.',cur:s=>s.tasksDone,target:50,fmt:c=>`${Math.min(c,50)} / 50 tasks`},
+ {id:'dsa',em:'💻',name:'DSA Milestone',desc:'Complete your chosen DSA target.',cur:s=>s.dsaPct,target:100,fmt:c=>`${Math.floor(Math.min(c,100))}% of your DSA goal`},
+ {id:'h100',em:'🏆',name:'100 Hours',desc:'Complete 100 hours of focused preparation.',cur:s=>s.totalMin,target:6000,fmt:c=>`${fmtMin(Math.min(c,6000))} / 100h`},
+ {id:'ready',em:'🚀',name:'Placement Ready',desc:'Complete your entire placement preparation plan.',cur:s=>s.journeyPct,target:100,fmt:c=>`${Math.floor(Math.min(c,100))}% of your journey`},
+];
+function checkAchievements(){
+  const s=computeStats();let unlocked=false;
+  ACH_DEFS.forEach(d=>{
+    if(!state.achievements[d.id]&&d.cur(s)>=d.target){
+      state.achievements[d.id]=Date.now();unlocked=true;
+      setTimeout(()=>{toast(`Achievement unlocked — ${d.name} ${d.em}`);confetti(14);compMood('happy',`Achievement! ${d.name} ${d.em} ♡`,5000);},700);
+    }
+  });
+  if(unlocked)save();
+}
+function checkGoalCompletions(){
+  const newly=[];
+  state.goals.forEach(g=>{if(!g.achievedAt&&goalProgress(g).pct>=100){g.achievedAt=Date.now();newly.push(g);}});
+  if(newly.length){
+    save();
+    setTimeout(()=>{toast('You finished something you once planned to start. 🎉');confetti(44);compSpin();compHug();compSay('GOAL COMPLETE!! You earned your reward ♡🎉',6500);},400);
+  }
+}
+
+/* ================= ui atoms ================= */
+function toast(msg){
+  const el=document.createElement('div');el.className='toast';el.textContent=msg;
+  $('#toasts').appendChild(el);
+  requestAnimationFrame(()=>el.classList.add('show'));
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),350);},3800);
+}
+function confetti(n=26){
+  if(reducedMotion())return;
+  const root=$('#confetti-root');
+  const colors=['#E28FA4','#C29B4C','#EDABC0','#C25E7B','#F4D6E0','#AC4A6A'];
+  for(let i=0;i<n;i++){
+    const p=document.createElement('span');p.className='confetti-p';
+    const sz=5+Math.random()*6;
+    p.style.cssText=`left:${Math.random()*100}vw;width:${sz}px;height:${sz*0.6}px;background:${colors[i%colors.length]};--d:${(0.9+Math.random()*1.3).toFixed(2)}s;--dl:${(Math.random()*0.35).toFixed(2)}s;--dx:${(Math.random()*160-80).toFixed(0)}px;`;
+    root.appendChild(p);
+  }
+  setTimeout(()=>{root.innerHTML='';},2600);
+}
+let confirmCb=null;
+function openModal(html){
+  const r=$('#modal-root');
+  r.innerHTML=`<div class="modal-overlay"><div class="modal">${html}</div></div>`;
+  document.body.style.overflow='hidden';
+  compHideBubble();
+  const ov=r.firstElementChild;
+  ov.addEventListener('click',e=>{if(e.target===ov)closeModal();});
+}
+function closeModal(){$('#modal-root').innerHTML='';document.body.style.overflow='';}
+function openConfirm(title,msg,label,cb){
+  confirmCb=cb;
+  openModal(`<div class="modal-head"><h3>${esc(title)}</h3><button type="button" class="btn-icon btn-ghost" data-action="modal-close" aria-label="Close">${icon('x')}</button></div>
+  <p class="confirm-msg">${esc(msg)}</p>
+  <div class="modal-foot"><button type="button" class="btn btn-ghost" data-action="modal-close">Cancel</button><button type="button" class="btn btn-danger-solid" data-action="confirm-yes">${esc(label)}</button></div>`);
+}
+const emptyState=(title,sub,btn,action)=>`<div class="empty card"><div class="empty-ic">${icon('heart')}</div><h3>${title}</h3><p>${sub}</p><button type="button" class="btn btn-primary" data-action="${action}">${btn}</button></div>`;
+const pageHead=(eyebrow,title,right='')=>`<div class="page-head"><div><span class="eyebrow">${eyebrow}</span><h1>${title}</h1></div>${right}</div>`;
+function ringHTML(pct,{size=150,stroke=13,key=null,center='',gold=false,live=false}={}){
+  const r=(size-stroke)/2,c=2*Math.PI*r,off=c*(1-clamp(pct,0,100)/100);
+  return `<div class="ring-wrap" style="width:${size}px;height:${size}px;max-width:100%">
+    <svg viewBox="0 0 ${size} ${size}">
+      <circle class="ring-track" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}" fill="none"/>
+      <circle class="ring-fill ${gold?'gold':''} ${live?'live':''}" ${key?`data-key="${key}"`:''} ${live?'id="f-ring"':''} data-c="${c}" data-off="${off}" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}" fill="none" stroke-dasharray="${c}" stroke-dashoffset="${off}"/>
+    </svg><div class="ring-center">${center}</div></div>`;
+}
+const lastRingOff={};
+function animateRings(){
+  $$('.ring-fill:not(.live)').forEach(el=>{
+    const key=el.dataset.key;if(!key)return;
+    const c=+el.dataset.c,off=+el.dataset.off;
+    const prev=(key in lastRingOff)?lastRingOff[key]:c;
+    el.style.transition='none';el.style.strokeDashoffset=prev;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.transition='';el.style.strokeDashoffset=off;}));
+    lastRingOff[key]=off;
+  });
+}
+
+/* ================= Mochi: calm 2D companion engine ================= */
+const COMP_TIPS=[
+ "You don't have to be perfect today. Just present ♡",
+ "Drink some water — hydration is focus fuel ♡",
+ "Future-you says thank you for every focused minute ♡",
+ "If it feels heavy, make it smaller. One page. One problem ♡",
+ "I'm watching over your streak, don't worry ♡",
+ "Rest is part of the work. Don't skip it ♡",
+ "You've done hard things before. You'll do them again ♡",
+ "The days you don't feel like it count double ♡",
+ "A tidy desk is a tidy mind — 30 seconds, worth it ♡",
+ "Stretch your shoulders. You've been carrying a lot ♡",
+ "One deep breath before the next problem ♡",
+ "Your notes from last week are proud of you ♡",
+];
+const MOTIVATE=[
+ "You've survived 100% of your hardest days so far. Today is just one more ♡",
+ "One task. One session. That's the whole plan. You can do that ♡",
+ "You're not behind. You're on your own path, and it's yours ♡",
+ "Every focused minute is a brick in the wall between you and your dream job ♡",
+ "The version of you that gets placed is being built right now ♡",
+ "Deep breath. Shoulders down. Begin ♡",
+ "Talent opens doors. Consistency keeps them open. You're building both ♡",
+ "Someone is going to get that offer. Train like it's you ♡",
+ "Hard now, proud later. That's the trade ♡",
+ "The syllabus ends. Your habits stay. Build good ones today ♡",
+];
+const HUG_LINES=[
+ "Hugging you back ♡ You've got this.",
+ "*squeeze* ♡ I'm so proud of you.",
+ "Warm hugs, warm heart ♡ Keep going.",
+ "You're doing better than you think ♡",
+ "One hug = one refill of courage ♡",
+];
+const SLEEP_LINES=["Zzz... ♡","Zzz... dreaming of your offer letter ♡","Zzz... counting solved problems...","(soft bunny snores) ♡"];
+const FOLLOW_LINES=["Coming with you~ ♡","Right behind you!","Where are we going? ♡","Adventure! ♡"];
+const WALK_LINES=["Taking a little stroll~ ♡","This spot has good vibes ♡","Stretching my legs~"];
+const BYE_LINES=["Okay! I'll be right here ♡","Ping me anytime, okay? ♡","I'll keep watching over your streak ♡"];
+const TALK_TOPICS=[
+ {q:"How are you feeling today?",a:[
+   ["Pretty good! ♡","Yay! Let's keep that energy going ✨"],
+   ["A little tired…","Rest counts as work too ♡ Want a short session later?"],
+   ["Kinda stressed 😖","One small task. That's all for now. I'm right here ♡"]]},
+ {q:"How's the studying going?",a:[
+   ["Going well!","I knew it! You get closer every single day ♡"],
+   ["Slow today…","Slow days still count. Momentum beats speed ♡"],
+   ["Haven't started…","That's okay! 10 minutes with me? Tiny counts ♡"]]},
+ {q:"What should we do next?",a:[
+   ["A focus session","Yes! Pick a task and tap Focus — I'll be cheering ♡"],
+   ["A break","Good call! Water, stretch, breathe ♡"],
+   ["Not sure…","Your easiest task first. Small wins open big doors ♡"]]},
+ {q:"Want to hear something true?",a:[
+   ["Yes please ♡","You show up even on hard days. That's rarer than you think ♡"],
+   ["Hmm, tell me","You keep going quietly. I notice, and I'm proud of you ♡"]]},
+ {q:"Need a hug or a pep talk?",a:[
+   ["A hug 🤗","*warm bunny hug* ♡ You're not alone in this."],
+   ["Pep talk!","You've survived every hard day so far. Today's just another one ♡"]]},
+ {q:"How's the streak treating you?",a:[
+   ["Still going!","Protect it with 15 focused minutes today ♡"],
+   ["I broke it…","Streaks restart. You've done it before, you'll do it again ♡"]]},
+];
+const PAGE_LINES={
+ dashboard:["Home sweet home~ ♡","What's today's mission?","Let's make today count ♡"],
+ tasks:["What's on the list? ♡","One task at a time~","Pick one, start small ♡"],
+ focus:["Focus time! I'll be right here ♡","Deep breath... and go!","You've got this! ✨"],
+ goals:["Big dreams, small steps ♡","Every session moves these forward~","What are we chasing today?"],
+ stats:["Ooh, numbers~ ✨","Progress looks good on you ♡","Consistency is magic!"],
+ achievements:["The trophy room! ✨","So close to the next unlock ♡","Every one is earned!"],
+ calendar:["Plan ahead — future you says thanks ♡","Mark the big days!"],
+ reflections:["How was today? Be kind to yourself ♡","Small wins count too~"],
+ settings:["Make it cozy~ ♡","Tweak till it feels right!"],
+};
+const c2={
+  ready:false,wrap:null,body:null,bubble:null,pupils:null,errs:0,
+  cur:{x:0,y:0},tar:{x:0,y:0},mouse:{x:0,y:0},mouseMoved:false,lastMouseMove:0,lastActive:Date.now(),
+  state:'idle',chatOpen:false,sleepy:false,justWoke:false,dragging:false,dragMoved:false,dragStart:null,dragPt:null,
+  speed:0,prevSpeed:0,movingFlag:false,movingOffAt:0,followLineAt:0,compInitDone:false,tipIdx:0,sleepIdx:0,talkTopic:null,moodTimer:null,sayTimer:null,
+};
+const isMobileView=()=>window.matchMedia('(max-width: 900px)').matches;
+const compSize=()=>isMobileView()?78:108;
+const compHalfH=()=>compSize()*140/150/2;
+const compBubbleEl=()=>c2.bubble;
+
+function clampPos(p){
+  const s=compSize(),hh=compHalfH();
+  const topMin=hh+74;
+  const botMax=innerHeight-hh-(isMobileView()?112:26);
+  return {x:clamp(p.x,s/2+8,Math.max(s/2+8,innerWidth-s/2-8)),y:clamp(p.y,topMin,Math.max(topMin,botMax))};
+}
+function anchorPos(){return isMobileView()?{x:60,y:innerHeight-146}:{x:296,y:innerHeight-92};}
+function nearestCorner(){
+  const cands=[
+    {x:296,y:innerHeight-92},{x:innerWidth-124,y:innerHeight-92},
+    {x:296,y:150},{x:innerWidth-124,y:150}
+  ];
+  let best=cands[0],bd=1e9;
+  cands.forEach(c=>{const d=Math.hypot(c.x-c2.cur.x,c.y-c2.cur.y);if(d<bd){bd=d;best=c;}});
+  return best;
+}
+function initCompanion2D(){
+  try{
+    c2.wrap=$('#companion');c2.body=$('#comp-body');c2.bubble=$('#comp-bubble');c2.pupils=$('#comp-pupils');
+    if(!c2.wrap||!c2.body)return;
+    c2.ready=true;
+    c2.cur=clampPos({x:innerWidth*0.62,y:innerHeight*0.52});
+    c2.tar={...c2.cur};
+    bindCompanionPointer();
+    window.addEventListener('resize',()=>{c2.cur=clampPos(c2.cur);c2.tar=clampPos(c2.tar);});
+    scheduleWander();
+    requestAnimationFrame(tick2D);
+    setTimeout(compGreet,1500);
+    setTimeout(()=>toast('🐰 Mochi is awake!'),700);
+  }catch(e){
+    c2.ready=false;
+    try{toast('Mochi failed to start — the app still works ♡');}catch(_){}
+    console.warn('companion error',e);
+  }
+}
+/* rAF driver + guarded frame */
+function tick2D(){
+  requestAnimationFrame(tick2D);
+  try{frame2D();}catch(e){c2.errs++;if(c2.errs<3)console.warn('mochi frame error',e);}
+}
+function frame2D(){
+  if(!c2.ready)return;
+  if(state&&state.user&&U().compHidden)return;
+  const now=performance.now();
+  const dt=Math.min((now-(frame2D.last||now))/1000,0.05);frame2D.last=now;
+  const reduced=reducedMotion();
+  const modalOpen=document.body.style.overflow==='hidden';
+  const onBreak=state&&state.timer&&state.timer.mode==='break';
+  /* target */
+  if(c2.dragging&&c2.dragPt){c2.cur={...c2.dragPt};c2.tar={...c2.dragPt};}
+  else if(c2.chatOpen||c2.sleepy){c2.tar={...c2.cur};}
+  else if(modalOpen||onBreak){c2.tar=clampPos(anchorPos());}
+  else if(!reduced&&!isMobileView()&&c2.mouseMoved&&now-c2.lastMouseMove<4000){
+    c2.tar=clampPos({x:c2.mouse.x+compSize()/2+52,y:c2.mouse.y+compHalfH()+84});
+    if(now-c2.followLineAt>26000&&c2.speed>0.25){c2.followLineAt=now;if(Math.random()<.4)compSay(FOLLOW_LINES[Math.floor(Math.random()*FOLLOW_LINES.length)],3000);}
+  }
+  else if(!reduced&&!isMobileView()&&c2.mouseMoved&&now-c2.lastMouseMove<12000){
+    c2.tar=clampPos(nearestCorner());
+  }
+  if(!(c2.dragging&&c2.dragPt)){
+    const k=1-Math.pow(0.12,dt);
+    c2.cur.x+=(c2.tar.x-c2.cur.x)*k;
+    c2.cur.y+=(c2.tar.y-c2.cur.y)*k;
+  }
+  const dist=Math.hypot(c2.tar.x-c2.cur.x,c2.tar.y-c2.cur.y);
+  c2.prevSpeed=c2.speed;
+  c2.speed+=(clamp(dist/150,0,1)-c2.speed)*Math.min(1,dt*5);
+  /* walk class with HYSTERESIS — no flicker, no vibration */
+  const onThresh=c2.movingFlag?0.09:0.2;
+  const wantMoving=!reduced&&!c2.dragging&&!c2.sleepy&&c2.speed>onThresh;
+  if(wantMoving){c2.movingOffAt=now+600;c2.movingFlag=true;}
+  else if(now>c2.movingOffAt){c2.movingFlag=false;}
+  c2.body.classList.toggle('moving',c2.movingFlag);
+  if(c2.prevSpeed>0.5&&c2.speed<=0.09&&!c2.dragging)compSquish();
+  const s=compSize();
+  c2.wrap.style.transform=`translate3d(${(c2.cur.x-s/2).toFixed(1)}px,${(c2.cur.y-compHalfH()).toFixed(1)}px,0)`;
+}
+/* strolls (only when you're not around) */
+function scheduleWander(){
+  setTimeout(()=>{
+    if(c2.ready)tryStroll();
+    scheduleWander();
+  },16000+Math.random()*12000);
+}
+function tryStroll(){
+  if(!c2.ready||c2.dragging||c2.chatOpen||c2.sleepy)return;
+  if(state&&state.timer)return;
+  const now=performance.now();
+  if(!isMobileView()&&c2.mouseMoved&&now-c2.lastMouseMove<12000)return;
+  if(isMobileView()){
+    c2.tar=clampPos({x:48+Math.random()*Math.max(60,innerWidth-130),y:innerHeight-146+(Math.random()<.35?-22-Math.random()*70:0)});
+  }else{
+    c2.tar=clampPos({x:110+Math.random()*Math.max(80,innerWidth-260),y:innerHeight*0.55+Math.random()*Math.max(60,innerHeight*0.45-180)});
+  }
+  if(Math.random()<.3)setTimeout(()=>{if(c2.state==='idle'&&!c2.sleepy)compSay(WALK_LINES[Math.floor(Math.random()*WALK_LINES.length)],3200);},800);
+}
+/* bubble / moods */
+function compSayHTML(html,ms=5200,interactive=false){
+  const b=compBubbleEl();if(!b||!c2.ready)return;
+  if(state&&state.user&&U().compHidden)return;
+  clearTimeout(c2.sayTimer);
+  c2.chatOpen=!!interactive;
+  b.classList.toggle('interactive',!!interactive);
+  b.innerHTML=html;
+  b.classList.toggle('flip',c2.cur.x>innerWidth-280);
+  b.classList.add('show');
+  c2.sayTimer=setTimeout(()=>compHideBubble(),ms);
+}
+function compSay(msg,ms=5200){compSayHTML(`<span>${esc(msg)}</span>`,ms,false);}
+function compHideBubble(){
+  const b=compBubbleEl();if(!b)return;
+  clearTimeout(c2.sayTimer);
+  c2.chatOpen=false;
+  b.classList.remove('show','interactive');
+  b.innerHTML='';
+}
+function compSetState(s){
+  if(!c2.body)return;
+  c2.state=s;
+  ['st-idle','st-focus','st-rest','st-happy','st-sleepy'].forEach(cl=>c2.body.classList.remove(cl));
+  c2.body.classList.add('st-'+s);
+  if(c2.wrap)c2.wrap.classList.toggle('asleep',s==='sleepy');
+}
+function compMood(s,msg,ms=5200){
+  if(!c2.ready)return;
+  compSetState(s);
+  if(msg)compSay(msg,ms);
+  clearTimeout(c2.moodTimer);
+  if(!['focus','rest','sleepy'].includes(s)){
+    c2.moodTimer=setTimeout(()=>{
+      if(['focus','rest','sleepy'].includes(c2.state))return;
+      if(state&&state.timer)compSetState(state.timer.mode==='break'?'rest':'focus');
+      else compSetState('idle');
+    },7000);
+  }
+}
+function compHearts(n=4){
+  if(!c2.ready||!c2.wrap||reducedMotion())return;
+  for(let i=0;i<n;i++){
+    const h=document.createElement('span');h.className='hpop';h.textContent='♡';
+    h.style.left=(12+Math.random()*72)+'px';
+    h.style.bottom=(56+Math.random()*30)+'px';
+    h.style.setProperty('--hx',((Math.random()*46)-23)+'px');
+    h.style.setProperty('--hr',((Math.random()*26)-13)+'deg');
+    h.style.animationDelay=(Math.random()*.4)+'s';
+    c2.wrap.appendChild(h);
+    setTimeout(()=>h.remove(),2400);
+  }
+}
+function compClassOnce(cls,ms){
+  if(!c2.body)return;
+  c2.body.classList.remove(cls);void c2.body.offsetWidth;c2.body.classList.add(cls);
+  setTimeout(()=>c2.body.classList.remove(cls),ms);
+}
+function compHop(){if(!reducedMotion())compClassOnce('hop',1100);}
+function compSquish(){compClassOnce('squish',620);}
+function compWiggle(){compClassOnce('wiggle',1150);}
+function compTwitch(){compClassOnce('twitch',560);}
+function compSpin(){compClassOnce('spin',950);compWiggle();}
+function compGlance(){
+  if(!c2.pupils||reducedMotion())return;
+  const dx=(Math.random()*3.6-1.8).toFixed(1),dy=(Math.random()*2-0.9).toFixed(1);
+  c2.pupils.style.transform=`translate(${dx}px,${dy}px)`;
+  setTimeout(()=>{c2.pupils.style.transform='';},1600);
+}
+/* menu / hug / talk / boost / sleep */
+function compOpenMenu(){
+  if(!c2.ready)return;
+  c2.lastActive=Date.now();
+  if(c2.sleepy){wake2();return;}
+  const first=(state&&state.user)?U().name.split(' ')[0]:'';
+  compSetState('happy');
+  compSayHTML(`<span>${first?esc(first)+', w':'W'}hat shall we do? ♡</span>
+    <span class="cb-btns">
+      <button type="button" data-action="comp-hug">🤗 Hug</button>
+      <button type="button" data-action="comp-talk">💬 Talk</button>
+      <button type="button" data-action="comp-motivate">💪 Boost</button>
+      <button type="button" data-action="comp-sleep">😴 Sleep</button>
+      <button type="button" data-action="comp-bye">✕</button>
+    </span>`,9000,true);
+}
+function compHug(){
+  if(!c2.ready)return;
+  compHideBubble();
+  c2.lastActive=Date.now();
+  compClassOnce('hugging',2800);
+  compSetState('happy');compWiggle();compHearts(6);
+  compSay(HUG_LINES[Math.floor(Math.random()*HUG_LINES.length)],4600);
+}
+function compStartTalk(){
+  if(!c2.ready)return;
+  compHideBubble();
+  c2.talkTopic=TALK_TOPICS[Math.floor(Math.random()*TALK_TOPICS.length)];
+  compSetState('happy');
+  compAsk();
+}
+function compAsk(){
+  const t=c2.talkTopic;if(!t)return;
+  compSayHTML(`<span>${esc(t.q)}</span>
+    <span class="cb-btns">${t.a.map((o,i)=>`<button type="button" data-action="comp-reply" data-i="${i}">${esc(o[0])}</button>`).join('')}</span>`,16000,true);
+}
+function compTalkReply(i){
+  const t=c2.talkTopic;if(!t)return;
+  c2.lastActive=Date.now();
+  const opt=t.a[clamp(i,0,t.a.length-1)];
+  c2.talkTopic=null;
+  compMood('happy',opt[1],5600);compHearts(2);
+}
+function compMotivate(){
+  if(!c2.ready)return;
+  compHideBubble();
+  c2.lastActive=Date.now();
+  compMood('happy',MOTIVATE[Math.floor(Math.random()*MOTIVATE.length)],6000);
+  compHearts(2);
+}
+function compGoSleep(){
+  if(!c2.ready)return;
+  compHideBubble();
+  c2.sleepy=true;
+  c2.tar={...c2.cur};
+  compSetState('sleepy');
+  compSay('Okay~ tucking in. Tap me to wake ♡',3600);
+}
+function compEndTalk(){
+  compHideBubble();
+  compMood('idle',BYE_LINES[Math.floor(Math.random()*BYE_LINES.length)],3200);
+}
+function wake2(){
+  c2.lastActive=Date.now();
+  if(c2.sleepy){
+    c2.sleepy=false;
+    c2.justWoke=true;
+    compSetState('idle');
+    compSay("Yawwn~ I'm awake! ♡",3200);
+    compClassOnce('wiggle',1150);
+  }
+}
+/* pointer: grab / drag / tap / smooth eye tracking */
+function bindCompanionPointer(){
+  document.addEventListener('pointerdown',e=>{
+    c2.lastActive=Date.now();
+    if(!c2.ready)return;
+    if(e.target.closest('#comp-bubble'))return;
+    if(state&&state.user&&U().compHidden)return;
+    const d=Math.hypot(e.clientX-c2.cur.x,e.clientY-c2.cur.y);
+    if(d<=Math.max(44,compSize()*0.62)){
+      e.preventDefault();e.stopPropagation();
+      if(c2.sleepy){wake2();return;}
+      c2.dragging=true;c2.dragMoved=false;
+      c2.dragStart={x:e.clientX,y:e.clientY};
+      c2.dragPt={x:e.clientX,y:e.clientY+compHalfH()*0.5};
+      c2.wrap.classList.add('dragging');
+      try{c2.body.setPointerCapture(e.pointerId);}catch(_){}
+    }
+  },{capture:true});
+  window.addEventListener('pointermove',e=>{
+    c2.mouse.x=e.clientX;c2.mouse.y=e.clientY;
+    c2.mouseMoved=true;c2.lastMouseMove=performance.now();
+    c2.lastActive=Date.now();
+    if(c2.pupils&&!c2.sleepy&&!reducedMotion()&&!isMobileView()&&!c2.dragging){
+      const dx=e.clientX-c2.cur.x,dy=e.clientY-(c2.cur.y-compSize()*0.08);
+      const d=Math.hypot(dx,dy)||1;
+      const m=Math.min(1.7,d/90);
+      c2.pupils.style.transform=`translate(${(dx/d*m).toFixed(2)}px,${(dy/d*m).toFixed(2)}px)`;
+    }
+    if(c2.dragging){
+      c2.dragPt={x:e.clientX,y:e.clientY+compHalfH()*0.5};
+      if(c2.dragStart&&Math.hypot(e.clientX-c2.dragStart.x,e.clientY-c2.dragStart.y)>9)c2.dragMoved=true;
+    }
+  },{passive:true});
+  window.addEventListener('pointerup',()=>{
+    if(!c2.dragging)return;
+    c2.dragging=false;
+    c2.wrap.classList.remove('dragging');
+    if(c2.dragMoved){compSay('New spot! I like the view here ♡',3000);compWiggle();}
+    else compOpenMenu();
+    c2.justWoke=false;
+  });
+}
+/* greeting / tips / SLEEPING */
+function compGreet(){
+  if(!c2.ready||!state||!state.user)return;
+  const first=U().name.split(' ')[0];
+  const h=new Date().getHours();
+  const g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  compSay(`${g}, ${first}! I'm Mochi ♡ I follow your cursor — tap me to chat!`,5600);
+  setTimeout(()=>{
+    if(c2.sleepy)return;
+    const pct=Math.round(todayGoalPct());
+    const s=computeStats();
+    if(pct>=100){compMood('happy','Daily goal done! You crushed it ♡',4800);compHearts(3);compSpin();}
+    else if(pct>0)compSay(`You're at ${pct}% of today's goal — keep going ♡`,4400);
+    else if(s.curStreak>0)compSay(`${s.curStreak} day streak! Let's keep it alive 🔥`,4400);
+    else compSay('Want a hug or a pep talk? Tap me ♡',4200);
+  },6200);
+}
+function compPageLine(p){
+  if(!c2.ready||c2.sleepy||c2.dragging||c2.chatOpen)return;
+  if(!state||!state.user||state.timer)return;
+  if(U().compHidden)return;
+  const b=compBubbleEl();if(b&&b.classList.contains('show'))return;
+  if(Math.random()<.5)return;
+  const arr=PAGE_LINES[p];if(!arr)return;
+  compSay(arr[Math.floor(Math.random()*arr.length)],3800);
+}
+function compTipLine(){
+  if(state&&state.user&&Math.random()<.5){
+    const s=computeStats();
+    const pend=state.tasks.filter(t=>!t.completed&&t.date===todayKey()).length;
+    if(pend>0&&Math.random()<.6)return `${pend} task${pend>1?'s':''} left today — you've got this ♡`;
+    if(s.curStreak>=2)return `${s.curStreak} days strong! I'm so proud ♡`;
+    if(Math.random()<.4)return MOTIVATE[Math.floor(Math.random()*MOTIVATE.length)];
+  }
+  return COMP_TIPS[c2.tipIdx++%COMP_TIPS.length];
+}
+/* auto-sleep after 90s of no activity (and no focus session running) */
+setInterval(()=>{
+  if(!c2.ready||c2.sleepy)return;
+  if(!state||state.timer)return;
+  if(c2.state!=='idle')return;
+  if(performance.now()-c2.lastActive>90000){
+    c2.sleepy=true;
+    c2.tar={...c2.cur};
+    compSetState('sleepy');
+    compSay('Getting sleepy... zzz ♡ (tap to wake)',3200);
+  }
+},15000);
+/* sleepy whispers while she naps */
+setInterval(()=>{
+  if(!c2.ready||!c2.sleepy||c2.chatOpen)return;
+  if(state&&state.user&&U().compHidden)return;
+  compSay(SLEEP_LINES[c2.sleepIdx++%SLEEP_LINES.length],4200);
+},48000);
+setInterval(()=>{
+  if(!c2.ready||c2.sleepy||c2.dragging||c2.chatOpen)return;
+  if(!state||!state.user||state.timer)return;
+  if(U().compHidden)return;
+  const b=compBubbleEl();if(b&&b.classList.contains('show'))return;
+  compSay(compTipLine(),5600);
+},34000);
+document.addEventListener('keydown',()=>{c2.lastActive=Date.now();});
+function applyCompanionVisibility(){
+  const c=$('#companion');if(c)c.style.display=(state&&state.user&&U().compHidden)?'none':'';
+}
+function initAmbient(){
+  if(reducedMotion())return;
+  const host=$('#ambient');if(!host)return;
+  const glyphs=['♡','✿','✦','❀','✧','❁'];
+  const n=innerWidth<700?5:8;
+  for(let i=0;i<n;i++){
+    const s=document.createElement('span');s.className='amb';
+    s.textContent=glyphs[i%glyphs.length];
+    s.style.left=(Math.random()*100)+'vw';
+    s.style.fontSize=(9+Math.random()*12)+'px';
+    s.style.setProperty('--d',(22+Math.random()*26)+'s');
+    s.style.setProperty('--dl',(-Math.random()*30)+'s');
+    s.style.setProperty('--sw',((Math.random()*50)-25)+'px');
+    host.appendChild(s);
+  }
+}
+function initCute(){
+  if(c2.compInitDone)return;c2.compInitDone=true;
+  try{initAmbient();}catch(e){console.warn('ambient error',e);}
+  try{initCompanion2D();}catch(e){console.warn('companion error',e);}
+}
+
+/* ================= charts ================= */
+let chartSelKey=null,heatSelKey=null;
+function weekChartHTML(){
+  const keys=weekKeys(),mins=keys.map(minutesOn),goal=dailyGoalMin();
+  const max=Math.max(goal,...mins,60);
+  const labels=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],tk=todayKey();
+  return `<div class="wchart">${keys.map((k,i)=>{
+    const h=mins[i]>0?Math.max(7,mins[i]/max*100):0;
+    return `<button type="button" class="wcol ${k===(chartSelKey||tk)?'sel':''}" data-action="chart-day" data-key="${k}">
+      <span class="wval">${mins[i]?fmtMin(mins[i]):''}</span>
+      <div class="wbar-wrap"><div class="wbar ${k===tk?'today':''}" style="height:${h}%;animation-delay:${i*45}ms"></div></div>
+      <span class="wlabel">${labels[i]}</span></button>`;
+  }).join('')}</div>`;
+}
+function dayDetailHTML(k){
+  const m=minutesOn(k),sess=sessionsOn(k);
+  const done=state.tasks.filter(t=>t.date===k&&t.completed).length;
+  const subs=[...new Set(sess.map(s=>s.subject))];
+  return `<strong>${fmtDateLong(k)}</strong> · ${fmtMin(m)} focused · ${done} task${done!==1?'s':''} completed · ${sess.length} session${sess.length!==1?'s':''}${subs.length?` · ${subs.map(esc).join(', ')}`:''}`;
+}
+function heatLevel(min){
+  if(min<=0)return 0;const r=min/dailyGoalMin();
+  return r>=1?4:r>=.5?3:r>=.25?2:1;
+}
+function heatmapHTML(){
+  const end=new Date();end.setHours(23,59,59);
+  const start=mondayOf(end);start.setDate(start.getDate()-17*7);
+  let cols='',prevM=-1;
+  for(let w=0;w<18;w++){
+    let cells='',label='';
+    for(let dow=0;dow<7;dow++){
+      const d=new Date(start);d.setDate(start.getDate()+w*7+dow);
+      if(d>end){cells+='<span class="hm-cell future"></span>';continue;}
+      const k=dateKey(d),lv=heatLevel(minutesOn(k));
+      if(dow===0){const m=d.getMonth();if(m!==prevM){label=d.toLocaleDateString('en-US',{month:'short'});prevM=m;}}
+      cells+=`<button type="button" class="hm-cell lv${lv}" data-action="heat-day" data-key="${k}" title="${fmtDateShort(k)} · ${fmtMin(minutesOn(k))}" aria-label="${fmtDateShort(k)}"></button>`;
+    }
+    cols+=`<div class="hm-col"><span class="hm-mo">${label}</span><div class="hm-days">${cells}</div></div>`;
+  }
+  return `<div class="hm-scroll"><div class="hm">
+    <div class="hm-wd"><span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span></div>
+    ${cols}</div></div>
+    <div class="hm-legend">Less <span class="hm-cell lv0"></span><span class="hm-cell lv1"></span><span class="hm-cell lv2"></span><span class="hm-cell lv3"></span><span class="hm-cell lv4"></span> More &nbsp;·&nbsp; deepest = daily goal reached</div>`;
+}
+function subjectBarsHTML(){
+  const s=computeStats();
+  const entries=Object.entries(s.subjectMin).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length)return '<p class="empty-line">Your first focused session will appear here.</p>';
+  const max=entries[0][1];
+  const zero=U().subjects.filter(x=>!s.subjectMin[x]);
+  return entries.map(([k,v],i)=>`
+    <div class="sb-row"><span class="sb-name">${esc(k)}${(v<max*0.15&&max>=120)?'<span class="sb-tag">needs attention</span>':''}</span>
+    <div class="sb-track"><div class="sb-bar" style="width:${Math.max(3,v/max*100)}%;animation-delay:${i*50}ms"></div></div>
+    <span class="sb-val">${fmtMin(v)}</span></div>`).join('')
+    +(zero.length?`<p class="sb-zero empty-line">No time yet: ${zero.map(esc).join(', ')} — worth a visit soon.</p>`:'');
+}
+
+/* ================= tasks ================= */
+let taskFilter='all',taskScope='today',dragId=null;
+const prioLabel=p=>({low:'Low',medium:'Medium',high:'High'}[p]||'Medium');
+function visibleTasks(){
+  let arr=[...state.tasks];const tk=todayKey(),tm=tomorrowKey(),wk=weekKeys();
+  if(taskScope==='today')arr=arr.filter(t=>t.date===tk||(!t.completed&&t.date&&t.date<tk));
+  else if(taskScope==='tomorrow')arr=arr.filter(t=>t.date===tm);
+  else if(taskScope==='week')arr=arr.filter(t=>wk.includes(t.date));
+  if(taskFilter==='pending')arr=arr.filter(t=>!t.completed);
+  else if(taskFilter==='done')arr=arr.filter(t=>t.completed);
+  else if(taskFilter==='high')arr=arr.filter(t=>t.priority==='high'&&!t.completed);
+  return arr;
+}
+function taskCardHTML(t,compact=false){
+  const done=t.completed;
+  const overdue=!done&&t.date&&t.date<todayKey();
+  return `<div class="task lift ${done?'done':''}" data-id="${t.id}">
+    <button type="button" class="task-check ${done?'on':''}" data-action="task-toggle" data-id="${t.id}" aria-label="${done?'Reopen':'Mark complete'}">${done?icon('check'):''}</button>
+    <div class="task-main">
+      <div class="task-title">${esc(t.title)}</div>
+      <div class="task-meta"><span class="t-sub">${esc(t.subject)}</span><span class="dot">·</span><span>${t.estMin} min</span><span class="dot">·</span><span class="prio ${t.priority}">${prioLabel(t.priority)} priority</span>${overdue?'<span class="dot">·</span><span class="overdue">overdue</span>':''}${t.date&&t.date!==todayKey()?'<span class="dot">·</span><span>'+niceDate(t.date)+'</span>':''}</div>
+      ${t.studiedMin>0?`<div class="task-prog"><div class="task-prog-bar"><i style="width:${clamp(t.studiedMin/t.estMin*100,0,100)}%"></i></div><span>${fmtMin(t.studiedMin)} / ${t.estMin} min studied</span></div>`:''}
+      ${!compact&&t.desc?`<div class="task-desc">${esc(t.desc)}</div>`:''}
+      ${done?`<div class="task-done-note">Completed ✓${t.studiedMin>0?` · ${fmtMin(t.studiedMin)} studied`:''}</div>`:''}
+    </div>
+    <div class="task-actions">
+      ${!done?`<button type="button" class="btn btn-soft btn-sm" data-action="task-focus" data-id="${t.id}">${icon('play','s')} Focus</button>`:''}
+      <button type="button" class="btn-icon btn-ghost" data-action="task-edit" data-id="${t.id}" aria-label="Edit">${icon('pencil')}</button>
+      <button type="button" class="btn-icon btn-ghost danger" data-action="task-del" data-id="${t.id}" aria-label="Delete">${icon('trash')}</button>
+      ${compact?'':`<span class="reorder"><button type="button" class="btn-icon" data-action="task-up" data-id="${t.id}" aria-label="Move up">${icon('chevU')}</button><button type="button" class="btn-icon" data-action="task-down" data-id="${t.id}" aria-label="Move down">${icon('chevD')}</button></span>`}
+    </div></div>`;
+}
+function bindDrag(){
+  const list=$('#task-list');if(!list)return;
+  $$('.task',list).forEach(card=>{
+    card.draggable=true;
+    card.addEventListener('dragstart',e=>{dragId=card.dataset.id;card.classList.add('dragging');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',dragId);}catch(_){}});
+    card.addEventListener('dragend',()=>{card.classList.remove('dragging');$$('.task').forEach(c=>c.classList.remove('drop-target'));dragId=null;});
+    card.addEventListener('dragover',e=>{if(!dragId||dragId===card.dataset.id)return;e.preventDefault();card.classList.add('drop-target');});
+    card.addEventListener('dragleave',()=>card.classList.remove('drop-target'));
+    card.addEventListener('drop',e=>{
+      e.preventDefault();card.classList.remove('drop-target');
+      if(!dragId||dragId===card.dataset.id)return;
+      const from=state.tasks.findIndex(t=>t.id===dragId),to=state.tasks.findIndex(t=>t.id===card.dataset.id);
+      if(from<0||to<0)return;
+      const[m]=state.tasks.splice(from,1);state.tasks.splice(to,0,m);
+      dragId=null;save();renderPage();
+    });
+  });
+}
+function moveTask(id,dir){
+  const vis=visibleTasks().map(t=>t.id);const i=vis.indexOf(id),j=i+dir;
+  if(i<0||j<0||j>=vis.length)return;
+  const a=state.tasks.findIndex(t=>t.id===vis[i]),b=state.tasks.findIndex(t=>t.id===vis[j]);
+  const[m]=state.tasks.splice(a,1);state.tasks.splice(b,0,m);
+  save();renderPage();
+}
+function openTaskModal(task=null,presetDate=null){
+  const t=task||{};const dateVal=t.date||presetDate||todayKey();
+  openModal(`<form id="taskForm" novalidate>
+    <div class="modal-head"><h3>${task?'Edit Task':'New Task'}</h3><button type="button" class="btn-icon btn-ghost" data-action="modal-close" aria-label="Close">${icon('x')}</button></div>
+    <div class="field"><label>Task name</label><input class="input" name="title" maxlength="120" placeholder="e.g. Solve 10 Binary Tree Problems" value="${esc(t.title||'')}"></div>
+    <div class="frow">
+      <div class="field"><label>Subject</label><select name="subject" class="input">${U().subjects.map(s=>`<option ${s===(t.subject||U().subjects[0])?'selected':''}>${esc(s)}</option>`).join('')}</select></div>
+      <div class="field"><label>Estimated time (minutes)</label><input class="input" type="number" name="estMin" min="5" max="600" step="5" value="${t.estMin??60}"></div>
+    </div>
+    <div class="frow">
+      <div class="field"><label>Priority</label><select name="priority" class="input">${['low','medium','high'].map(p=>`<option value="${p}" ${(t.priority||'medium')===p?'selected':''}>${prioLabel(p)}</option>`).join('')}</select></div>
+      <div class="field"><label>Date</label><input class="input" type="date" name="date" value="${esc(dateVal)}"></div>
+    </div>
+    <div class="frow">
+      <div class="field"><label>Start time <span class="opt">(optional)</span></label><input class="input" type="time" name="startTime" value="${esc(t.startTime||'')}"></div>
+      <div class="field"><label>Deadline <span class="opt">(optional)</span></label><input class="input" type="date" name="deadline" value="${esc(t.deadline||'')}"></div>
+    </div>
+    <div class="field"><label>Related goal</label><select name="goalId" class="input"><option value="">None</option>${state.goals.map(g=>`<option value="${g.id}" ${t.goalId===g.id?'selected':''}>${esc(g.title)}</option>`).join('')}</select></div>
+    <div class="field"><label>Description <span class="opt">(optional)</span></label><textarea name="desc" class="short" placeholder="What exactly will you work on?">${esc(t.desc||'')}</textarea></div>
+    <div class="field"><label>Notes <span class="opt">(optional)</span></label><textarea name="notes" class="short">${esc(t.notes||'')}</textarea></div>
+    <div class="modal-foot"><button type="button" class="btn btn-ghost" data-action="modal-close">Cancel</button><button type="submit" class="btn btn-primary">${task?'Save changes':'+ Add Task'}</button></div>
+  </form>`);
+  $('#taskForm').addEventListener('submit',e=>{
+    e.preventDefault();
+    const d=Object.fromEntries(new FormData(e.target).entries());
+    if(!String(d.title||'').trim()){toast('Give your task a name.');return;}
+    const payload={title:String(d.title).trim(),subject:d.subject,estMin:clamp(+d.estMin||60,5,600),priority:d.priority||'medium',date:d.date||todayKey(),startTime:d.startTime||'',deadline:d.deadline||'',goalId:d.goalId||null,desc:String(d.desc||''),notes:String(d.notes||'')};
+    if(task){Object.assign(task,payload);toast('Task updated.');compTwitch();}
+    else{state.tasks.push({id:uid(),...payload,studiedMin:0,completed:false,completedAt:null,createdAt:Date.now(),deferredAck:false});toast('Task added to your plan.');compSay("On the list! We've got this ♡",3000);}
+    save();closeModal();renderApp();
+  });
+}
+
+/* ================= focus engine ================= */
+let focusSel={taskId:'free',min:null,custom:'',freeSubject:null};
+let justCompleted=null,justBreakDone=false;
+function timerElapsed(){const t=state.timer;if(!t)return 0;return t.accumulated+(t.running?(Date.now()-t.startedAt)/1000:0);}
+function effDur(){
+  if(focusSel.min)return clamp(Math.round(focusSel.min),1,180);
+  const t=focusSel.taskId!=='free'?findTask(focusSel.taskId):null;
+  if(t&&t.estMin){const rem=t.estMin-t.studiedMin;if(rem>0)return clamp(Math.round(Math.min(rem,U().sessionMin)),1,180);}
+  return U().sessionMin;
+}
+function startFocusFromTask(id){
+  if(state.timer){navTo('focus');toast('A session is already running.');return;}
+  const t=findTask(id);if(!t||t.completed)return;
+  focusSel={taskId:id,min:null,custom:'',freeSubject:focusSel.freeSubject};
+  justCompleted=null;justBreakDone=false;
+  startFocusSession();
+}
+function startFocusSession(){
+  if(state.timer){toast('A session is already running.');return;}
+  if(focusSel.taskId!=='free'&&!state.tasks.find(t=>t.id===focusSel.taskId&&!t.completed))focusSel.taskId='free';
+  const min=effDur();
+  if(!(min>=1&&min<=180)){toast('Choose a session length between 1 and 180 minutes.');return;}
+  const task=focusSel.taskId==='free'?null:findTask(focusSel.taskId);
+  const subject=task?task.subject:(focusSel.freeSubject||U().subjects[0]||'General');
+  state.timer={mode:'focus',taskId:task?task.id:null,title:task?task.title:'Free focus session',subject,goalId:task?task.goalId:null,plannedSec:min*60,startedAt:Date.now(),sessionStart:Date.now(),accumulated:0,running:true};
+  justCompleted=null;justBreakDone=false;
+  save();renderApp();toast("Let's get one focused session done.");
+  compMood('focus',"Focus time! Go go go~ I'm cheering for you ♡",5000);
+}
+function startBreak(min){
+  if(state.timer&&state.timer.mode==='focus'){toast('Finish your focus session first.');return;}
+  min=clamp(Math.round(min),1,60);
+  state.timer={mode:'break',plannedSec:min*60,startedAt:Date.now(),accumulated:0,running:true};
+  justCompleted=null;justBreakDone=false;
+  save();renderApp();
+  compMood('rest','Break time! Rest well~ 🌸',5000);
+}
+function skipBreak(){if(state.timer&&state.timer.mode==='break'){state.timer=null;justBreakDone=true;save();renderApp();compMood('idle','Okay~ back to it! ✨',3000);}}
+function pauseTimer(){
+  const t=state.timer;if(!t||!t.running)return;
+  t.accumulated=timerElapsed();t.running=false;t.startedAt=null;
+  save();renderPage();updateMiniPill(true);
+  compMood('idle',t.mode==='break'?'Break paused~ no rush ♡':'Paused! Stretch a little~',3200);
+}
+function resumeTimer(){
+  const t=state.timer;if(!t||!t.running)return;
+  t.startedAt=Date.now();t.running=true;
+  save();renderPage();updateMiniPill(true);
+  compMood(t.mode==='break'?'rest':'focus',t.mode==='break'?'Break continues~ ♡':"Let's finish strong~!",3000);
+}
+function resetTimer(){
+  const el=timerElapsed();
+  const doReset=()=>{state.timer=null;save();renderApp();toast('Session reset.');compMood('idle','Fresh start~ ♡',2600);};
+  if(el>=60)openConfirm('Reset session?','Time in this session won\'t be recorded.','Reset session',doReset);
+  else doReset();
+}
+function finishTimer(){
+  const t=state.timer;if(!t)return;
+  const el=Math.min(timerElapsed(),t.plannedSec);
+  state.timer=null;
+  if(t.mode==='break'){
+    justBreakDone=true;save();renderApp();toast("Break's over. Ready when you are. 🌸");
+    compMood('idle','Recharged and ready! ✨',3200);
+    return;
+  }
+  if(el>=60){
+    const sec=Math.round(el);
+    const beforePct=todayGoalPct(),beforeStreak=streaks().cur;
+    const task=t.taskId?findTask(t.taskId):null;
+    state.sessions.push({id:uid(),taskId:t.taskId,title:t.title,subject:t.subject,goalId:task?task.goalId:t.goalId,dateKey:todayKey(),startedAt:t.sessionStart,endAt:Date.now(),focusedSec:sec});
+    if(task){
+      task.studiedMin=round1(task.studiedMin+sec/60);
+      if(!task.completed&&task.estMin&&task.studiedMin>=task.estMin)setTimeout(()=>toast(`Time estimate reached for “${task.title}” — ready to mark it complete.`),1600);
+    }
+    justCompleted={sec,title:t.title,subject:t.subject};
+    const afterStreak=streaks().cur,afterPct=todayGoalPct();
+    checkGoalCompletions();checkAchievements();save();
+    if(beforePct<100&&afterPct>=100){
+      confetti(46);toast('Daily goal complete. You showed up today. 🎯');
+      compSpin();compHug();
+      setTimeout(()=>compSay('DAILY GOAL COMPLETE!! I\'m so proud of you ♡',6500),400);
+    }
+    else if(afterStreak>beforeStreak){
+      toast(`🔥 ${afterStreak} days of consistency. Keep building.`);
+      compMood('happy',`${afterStreak} day streak! We're on fire~ 🔥`,5400);compHearts(4);
+    }
+    else{
+      toast(`${fmtMin(sec/60)} logged${t.subject?` to ${t.subject}`:''}. That's one more step forward.`);
+      compMood('happy',`${fmtMin(sec/60)} focused! You did amazing ♡`,5200);compHearts(4);
+    }
+  }else{
+    justCompleted=null;toast("Session under a minute wasn't recorded.");
+    compMood('idle','Next time we\'ll focus a little longer~ ♡',3000);
+  }
+  save();renderApp();
+}
+function updateTimerUI(){
+  const t=state.timer;if(!t)return;
+  const el=timerElapsed(),rem=Math.max(0,t.plannedSec-el);
+  const clock=$('#f-clock');
+  if(clock){
+    clock.textContent=fmtClock(rem);
+    const ring=$('#f-ring');
+    if(ring){const c=+ring.dataset.c;ring.style.strokeDashoffset=String(c*(1-rem/t.plannedSec));}
+    const el2=$('#f-elapsed');if(el2)el2.textContent=`Elapsed ${fmtClock(el)} of ${Math.round(t.plannedSec/60)} min`;
+    const task=t.taskId?findTask(t.taskId):null;
+    const bar=$('#f-taskbar');
+    if(bar&&task&&task.estMin){
+      bar.style.width=clamp((task.studiedMin+el/60)/task.estMin*100,0,100)+'%';
+      const lbl=$('#f-taskbar-l');if(lbl)lbl.textContent=`${fmtMin(task.studiedMin+el/60)} / ${task.estMin} min on this task`;
+    }
+  }
+  updateMiniPill();
+  document.title=`${fmtClock(rem)} · ${t.mode==='break'?'Break':'Focus'} — Bloom`;
+}
+let pillSig='';
+function updateMiniPill(force=false){
+  const host=$('#minipill'),t=state.timer;
+  if(!t||currentPage==='focus'){host.innerHTML='';host.style.display='none';pillSig='';return;}
+  const sig=`${t.mode}|${t.running}|${t.taskId||''}`;
+  if(!force&&sig===pillSig&&$('#pill-clock')){const rem=Math.max(0,t.plannedSec-timerElapsed());$('#pill-clock').textContent=fmtClock(rem);return;}
+  pillSig=sig;host.style.display='block';
+  const rem=Math.max(0,t.plannedSec-timerElapsed());
+  host.innerHTML=`<div class="pill" data-action="nav" data-nav="focus" role="button" tabindex="0">
+    <span class="pill-label">${t.mode==='break'?'BREAK':'FOCUS'}</span>
+    <span class="pill-clock" id="pill-clock">${fmtClock(rem)}</span>
+    <button type="button" class="pill-btn" data-action="${t.running?'focus-pause':'focus-resume'}" aria-label="${t.running?'Pause':'Resume'}">${icon(t.running?'pause':'play')}</button>
+  </div>`;
+}
+setInterval(()=>{
+  const t=state.timer;if(!t){return;}
+  if(t.running&&timerElapsed()>=t.plannedSec){finishTimer();return;}
+  if(t.mode==='focus'&&t.running&&timerElapsed()>=t.plannedSec/2&&!t.halfSaid){t.halfSaid=true;compSay('Halfway there! Keep going~ ✨',3800);}
+  updateTimerUI();
+},250);
+document.addEventListener('visibilitychange',()=>{const t=state.timer;if(t&&t.running&&timerElapsed()>=t.plannedSec)finishTimer();else updateTimerUI();});
+
+/* ================= goals ================= */
+let gDraft=null;
+function goalSubjectChips(){return U().subjects.map(s=>`<button type="button" class="ob-chip sm ${gDraft.subs.has(s)?'on':''}" data-action="gsubject" data-s="${esc(s)}">${esc(s)}</button>`).join('')||'<span class="empty-line">No subjects yet — add some in Settings.</span>';}
+function msListHTML(){return gDraft.ms.map((m,i)=>`<div class="ms-item"><span>${esc(m.text)}</span><button type="button" class="btn-icon btn-ghost" data-action="ms-del" data-i="${i}" aria-label="Remove">${icon('x')}</button></div>`).join('')||'<span class="empty-line">No milestones yet.</span>';}
+function openGoalModal(goal){
+  gDraft={ms:goal?goal.milestones.map(m=>({...m})):[],subs:new Set(goal?goal.subjects:[])};
+  const g=goal||{};
+  openModal(`<form id="goalForm" novalidate>
+    <div class="modal-head"><h3>${goal?'Edit Goal':'New Goal'}</h3><button type="button" class="btn-icon btn-ghost" data-action="modal-close" aria-label="Close">${icon('x')}</button></div>
+    <div class="field"><label>Goal title</label><input class="input" name="title" maxlength="120" placeholder="e.g. Become Placement Ready" value="${esc(g.title||'')}"></div>
+    <div class="field"><label>Description <span class="opt">(optional)</span></label><textarea name="desc" class="short">${esc(g.desc||'')}</textarea></div>
+    <div class="frow">
+      <div class="field"><label>Target date</label><input class="input" type="date" name="targetDate" value="${esc(g.targetDate||'')}"></div>
+      <div class="field"><label>Target study hours</label><input class="input" type="number" name="targetHours" min="1" max="5000" placeholder="e.g. 200" value="${g.targetHours??''}"></div>
+    </div>
+    <div class="field"><label>Related subjects</label><div class="chips" id="gsub-chips">${goalSubjectChips()}</div></div>
+    <div class="field"><label>Milestones <span class="opt">(one at a time)</span></label>
+      <div id="ms-list" style="margin-bottom:8px">${msListHTML()}</div>
+      <div class="ms-add"><input class="input" id="ms-input" placeholder="Add a milestone…"><button type="button" class="btn btn-ghost" data-action="ms-add">${icon('plus','s')} Add</button></div>
+    </div>
+    <div class="field"><label>Your reward <span class="opt">(something you'll earn)</span></label><input class="input" name="reward" maxlength="140" placeholder="e.g. Buy myself something I've wanted 🎁" value="${esc(g.reward||'')}"></div>
+    <div class="modal-foot"><button type="button" class="btn btn-ghost" data-action="modal-close">Cancel</button><button type="submit" class="btn btn-primary">${goal?'Save changes':'Create Goal'}</button></div>
+  </form>`);
+  $('#goalForm').addEventListener('submit',e=>{
+    e.preventDefault();
+    const d=Object.fromEntries(new FormData(e.target).entries());
+    if(!String(d.title||'').trim()){toast('Give your goal a title.');return;}
+    const payload={title:String(d.title).trim(),desc:String(d.desc||''),targetDate:d.targetDate||'',targetHours:+d.targetHours||0,subjects:[...gDraft.subs],milestones:gDraft.ms,reward:String(d.reward||'').trim()};
+    if(goal){Object.assign(goal,payload);toast('Goal updated.');}
+    else{state.goals.push({id:uid(),...payload,achievedAt:null,createdAt:Date.now()});toast('Goal created.');compSay('New goal! Love the ambition ♡',3200);compWiggle();}
+    save();closeModal();renderApp();
+  });
+}
+function goalCardHTML(g){
+  const p=goalProgress(g);
+  const progTxt=p.targetMin>0?`${fmtMin(p.doneMin)} / ${fmtMin(p.targetMin)} studied · ${fmtMin(Math.max(0,p.targetMin-p.doneMin))} remaining`
+    :(p.msTotal?`${p.msDone} / ${p.msTotal} milestones`:'Add target hours or milestones to track progress');
+  const pct=Math.round(p.pct);
+  return `<div class="card goal lift">
+    <div class="goal-head"><h3>${esc(g.title)}</h3>
+      <div style="display:flex;gap:2px"><button type="button" class="btn-icon btn-ghost" data-action="goal-edit" data-id="${g.id}" aria-label="Edit goal">${icon('pencil')}</button><button type="button" class="btn-icon btn-ghost danger" data-action="goal-del" data-id="${g.id}" aria-label="Delete goal">${icon('trash')}</button></div>
+    </div>
+    ${g.desc?`<p class="goal-desc">${esc(g.desc)}</p>`:''}
+    ${g.achievedAt?`<div class="goal-achieved"><div class="ga-t">GOAL ACHIEVED 🎉</div><p>You earned your reward.</p></div>`:`
+    <div class="goal-prog">
+      ${ringHTML(pct,{size:84,stroke:9,key:'goal-'+g.id,center:`<div class="ring-pct-sm">${pct}%</div>`,gold:pct>=100})}
+      <div class="gp-txt"><div class="gp-big">${progTxt}</div>
+      ${g.targetDate?`<div class="gp-sub">Target date · ${fmtDateShort(g.targetDate)}</div>`:''}
+      ${g.subjects.length?`<div class="gp-sub">Subjects · ${g.subjects.map(esc).join(', ')}</div>`:''}
+      ${g.milestones.length?`<div class="gp-sub">${g.milestones.filter(m=>m.done).length} of ${g.milestones.length} milestones done</div>`:''}
+      </div>
+    </div>`}
+    ${g.milestones.length?`<div class="goal-ms">${g.milestones.map((m,i)=>`
+      <div class="gms ${m.done?'done':''}" data-action="goal-ms-toggle" data-id="${g.id}" data-i="${i}" role="button" tabindex="0">
+        <span class="task-check ${m.done?'on':''}" style="cursor:pointer">${m.done?icon('check'):''}</span><span>${esc(m.text)}</span>
+      </div>`).join('')}</div>`:''}
+    ${g.reward?`<div class="reward"><span class="ric">${icon(g.achievedAt?'gift':'lock')}</span><div><b>Your Reward</b>${esc(g.reward)}${g.achievedAt?'':' · unlocks at 100%'}</div></div>`:''}
+  </div>`;
+}
+let sDraft=null;
+function stageSubjectChips(){return U().subjects.map(s=>`<button type="button" class="ob-chip sm ${sDraft.subs.has(s)?'on':''}" data-action="ssubject" data-s="${esc(s)}">${esc(s)}</button>`).join('');}
+function openStageModal(stage){
+  sDraft={subs:new Set(stage?stage.subjects:[])};
+  const st=stage||{};
+  openModal(`<form id="stageForm" novalidate>
+    <div class="modal-head"><h3>${stage?'Edit Stage':'New Journey Stage'}</h3><button type="button" class="btn-icon btn-ghost" data-action="modal-close" aria-label="Close">${icon('x')}</button></div>
+    <div class="field"><label>Stage name</label><input class="input" name="name" maxlength="80" placeholder="e.g. DSA" value="${esc(st.name||'')}"></div>
+    <div class="frow">
+      <div class="field"><label>Status</label><select name="status" class="input">${[['not-started','Not started'],['in-progress','In progress'],['done','Done']].map(([v,l])=>`<option value="${v}" ${(st.status||'not-started')===v?'selected':''}>${l}</option>`).join('')}</select></div>
+      <div class="field"><label>Target date</label><input class="input" type="date" name="targetDate" value="${esc(st.targetDate||'')}"></div>
+    </div>
+    <div class="field"><label>Linked subjects <span class="opt">(progress comes from their tasks)</span></label><div class="chips" id="ssub-chips">${stageSubjectChips()}</div></div>
+    <div class="modal-foot"><button type="button" class="btn btn-ghost" data-action="modal-close">Cancel</button><button type="submit" class="btn btn-primary">${stage?'Save changes':'Add Stage'}</button></div>
+  </form>`);
+  $('#stageForm').addEventListener('submit',e=>{
+    e.preventDefault();
+    const d=Object.fromEntries(new FormData(e.target).entries());
+    if(!String(d.name||'').trim()){toast('Give the stage a name.');return;}
+    const payload={name:String(d.name).trim(),status:d.status,targetDate:d.targetDate||'',subjects:[...sDraft.subs]};
+    if(stage)Object.assign(stage,payload);
+    else state.journey.stages.push({id:uid(),...payload});
+    checkAchievements();save();closeModal();renderApp();toast(stage?'Stage updated.':'Stage added.');
+  });
+}
+function journeyHTML(){
+  const stages=state.journey.stages;
+  const doneN=stages.filter(s=>s.status==='done').length;
+  const pct=stages.length?Math.round(doneN/stages.length*100):0;
+  const curIdx=stages.findIndex(s=>s.status!=='done');
+  let html=`<div class="card">
+    <div class="card-title"><div style="display:flex;align-items:center;gap:16px">
+      <h3>Placement Journey</h3>
+      ${stages.length?ringHTML(pct,{size:44,stroke:5,key:'journey',center:`<span style="font-size:11px;font-weight:800">${pct}%</span>`}):''}
+    </div>
+    <button type="button" class="btn btn-ghost btn-sm" data-action="open-stage-new">${icon('plus','s')} Add Stage</button></div>`;
+  if(!stages.length){
+    html+=`<div class="empty" style="padding:26px"><h3>Map your path.</h3><p>Stages take you from first concepts to placement-ready. Customize them freely.</p></div></div>`;return html;
+  }
+  html+=`<div class="timeline">${stages.map((st,i)=>{
+    const pctS=Math.round(stageProgress(st));
+    const isCur=i===curIdx;
+    const lbl=st.status==='done'?'Done':(pctS>0||st.status==='in-progress')?'In progress':'Not started';
+    const cls=st.status==='done'?'done':(pctS>0||st.status==='in-progress')?'inp':'not';
+    return `<div class="tl-stage ${st.status==='done'?'done':''} ${isCur?'current':''} ${i===stages.length-1?'final':''}">
+      <div class="tl-dot">${st.status==='done'?icon('check'):''}</div>
+      <div class="tl-body card-soft">
+        <div>
+          <div class="tl-name">${esc(st.name)} ${isCur?`<span class="chip" style="background:var(--pink-soft);color:var(--rose)">you are here</span>`:''}</div>
+          <div class="tl-meta">${st.targetDate?'Target '+fmtDateShort(st.targetDate):''}${st.subjects.length?(st.targetDate?' · ':'')+'Tasks in: '+st.subjects.map(esc).join(', '):''}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="tl-bar"><i style="width:${pctS}%"></i></div>
+          <span class="status-pill ${cls}">${lbl}</span>
+          <span class="tl-actions">
+            <button type="button" class="btn-icon btn-ghost" data-action="stage-up" data-id="${st.id}" aria-label="Move up">${icon('chevU')}</button>
+            <button type="button" class="btn-icon btn-ghost" data-action="stage-down" data-id="${st.id}" aria-label="Move down">${icon('chevD')}</button>
+            <button type="button" class="btn-icon btn-ghost" data-action="stage-edit" data-id="${st.id}" aria-label="Edit">${icon('pencil')}</button>
+            <button type="button" class="btn-icon btn-ghost danger" data-action="stage-del" data-id="${st.id}" aria-label="Delete">${icon('trash')}</button>
+          </span>
+        </div>
+      </div></div>`;
+  }).join('')}</div></div>`;
+  return html;
+}
+
+/* ================= pages ================= */
+let currentPage='dashboard';
+let calY=new Date().getFullYear(),calM=new Date().getMonth(),selectedCalKey=todayKey(),ratingSel=0;
+
+function renderDashboard(){
+  const u=U(),s=computeStats(),tk=todayKey();
+  const hour=new Date().getHours();
+  const greet=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
+  const emoji=hour<12?'🌸':hour<17?'☀️':'🌙';
+  const dayN=journeyDay();
+  const goalMin=dailyGoalMin(),doneMin=s.todayMin,pct=Math.round(Math.min(100,doneMin/goalMin*100)),rem=Math.max(0,goalMin-doneMin);
+  const todayTasks=state.tasks.filter(t=>t.date===tk||(!t.completed&&t.date&&t.date<tk));
+  const activeGoal=state.goals.find(g=>!g.achievedAt)||state.goals[0];
+  let html=`<div class="dash-head">
+    <div><h1>${greet}, ${esc(u.name.split(' ')[0])} ${emoji}</h1>
+    <div class="dash-dayline">Day ${dayN} of your Placement Journey · Target: ${esc(u.target)}${dayN>u.durationDays?` · plan was ${u.durationDays} days, every extra hour compounds`:''}</div></div>
+    <button type="button" class="btn btn-primary" data-action="quick-add">${icon('plus')} Add Task</button>
+  </div>`;
+  if(u.quotes!=='off')html+=`<div class="quote">“${dayQuote()}”</div>`;
+  const missionInner=pct>=100?`
+    <div class="mission-done" style="display:flex;flex-direction:column;align-items:center;gap:8px">
+      ${ringHTML(100,{size:132,stroke:12,key:'mission',gold:true,center:'<div style="font-size:36px">🎯</div>'})}
+      <div class="big">Daily Goal Complete 🎯</div><p>You kept your promise to yourself today.</p>
+    </div>`:`
+    ${ringHTML(pct,{size:168,stroke:14,key:'mission',center:`<div class="ring-pct">${pct}%</div><div class="f-sub">of daily goal</div>`})}
+    <div class="mission-stats">
+      <div><span class="ms-l">Daily Target</span><span class="ms-v">${fmtMin(goalMin)}</span></div>
+      <div><span class="ms-l">Completed</span><span class="ms-v">${fmtMin(doneMin)}</span></div>
+      <div><span class="ms-l">Remaining</span><span class="ms-v">${fmtMin(rem)}</span></div>
+    </div>
+    <div class="mission-cap">${fmtMin(doneMin)} / ${fmtMin(goalMin)} completed</div>`;
+  html+=`<div class="dash-grid">
+    <section class="card mission"><div class="mission-head"><span class="eyebrow" style="margin:0">TODAY'S MISSION</span><span class="chip">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})}</span></div>${missionInner}</section>
+    <div class="dash-side">
+      <div class="quick">
+        <div class="q"><b>🔥 ${s.curStreak}</b><span>day streak</span></div>
+        <div class="q"><b>${sessionsOn(tk).length}</b><span>sessions today</span></div>
+        <div class="q"><b>${todayTasks.filter(t=>!t.completed).length}</b><span>tasks left</span></div>
+      </div>
+      <div class="card"><div class="card-title"><h3>This Week</h3><span class="chip">${fmtMin(s.weekMin)}</span></div>${weekChartHTML()}</div>
+      ${activeGoal?(()=>{
+        const p=goalProgress(activeGoal);
+        return `<div class="card lift" data-action="nav" data-nav="goals" role="button" tabindex="0" style="cursor:pointer">
+          <div class="card-title"><h3>Active Goal</h3><span class="chip">${icon('arrowR','s')}</span></div>
+          <div class="goal-prog">${ringHTML(Math.round(p.pct),{size:72,stroke:8,key:'dash-goal',center:`<div class="ring-pct-sm">${Math.round(p.pct)}%</div>`})}
+          <div class="gp-txt"><div class="gp-big">${esc(activeGoal.title)}</div>
+          <div class="gp-sub">${p.targetMin>0?`${fmtMin(p.doneMin)} / ${fmtMin(p.targetMin)} studied`:(p.msTotal?`${p.msDone}/${p.msTotal} milestones`:'Set a target to track it')}</div></div></div></div>`;
+      })():`<div class="card" style="text-align:center;padding:24px"><h3 style="font-size:16px;margin-bottom:6px">What are you working toward?</h3><p class="page-sub" style="margin-bottom:12px">Goals give your sessions direction.</p><button type="button" class="btn btn-soft btn-sm" data-action="open-goal-modal">${icon('plus','s')} Create Your First Goal</button></div>`}
+    </div></div>`;
+  html+=`<div class="row-between"><div><span class="eyebrow">TODAY'S TASKS</span>${doneMin<=0&&todayTasks.length?`<p class="focus-line" style="margin-top:2px">Let's get one focused session done.</p>`:''}</div>
+  <button type="button" class="btn btn-ghost btn-sm" data-action="nav" data-nav="tasks">View all ${icon('arrowR','s')}</button></div>`;
+  html+=todayTasks.length?`<div class="task-list">${todayTasks.map(t=>taskCardHTML(t,true)).join('')}</div>`
+    :emptyState("Your day is still waiting to be planned.",'Add a task, estimate the time, then start a focus session.','+ Add Your First Task','quick-add');
+  return html;
+}
+
+function renderTasks(){
+  const vis=visibleTasks(),pendC=vis.filter(t=>!t.completed).length;
+  let html=pageHead('TASKS',"Today's Plan",`<button type="button" class="btn btn-primary" data-action="quick-add">${icon('plus')} Add Task</button>`);
+  html+=`<div class="filters">
+    <div class="seg">${[['all','All'],['pending','Pending'],['done','Completed'],['high','High Priority']].map(([v,l])=>`<button type="button" class="${taskFilter===v?'on':''}" data-action="filter-set" data-filter="${v}">${l}</button>`).join('')}</div>
+    <div class="seg">${[['today','Today'],['tomorrow','Tomorrow'],['week','This Week'],['all','All Dates']].map(([v,l])=>`<button type="button" class="${taskScope===v?'on':''}" data-action="scope-set" data-scope="${v}">${l}</button>`).join('')}</div>
+  </div>`;
+  html+=`<div id="task-list" class="task-list">${vis.length?vis.map(t=>taskCardHTML(t)).join(''):emptyState('Your day is still waiting to be planned.','Add a task, estimate the time, then start a focus session.','+ Add Your First Task','quick-add')}</div>`;
+  if(vis.length)html+=`<p class="list-note">${pendC} pending · ${vis.length-pendC} completed · drag cards or use the arrows to reorder · edit a task to move it to another day</p>`;
+  return html;
+}
+
+function renderFocus(){
+  const t=state.timer;
+  const head=pageHead('FOCUS','Focus Session');
+  if(t&&t.mode==='focus'){
+    const rem=Math.max(0,t.plannedSec-timerElapsed());
+    const task=t.taskId?findTask(t.taskId):null;
+    return head+`<div class="focus-wrap">
+      <span class="focus-badge">FOCUS MODE</span>
+      <h2 class="focus-task">${esc(t.title)}</h2>
+      ${ringHTML(rem/t.plannedSec*100,{size:270,stroke:16,live:true,center:`<div><div class="f-clock" id="f-clock">${fmtClock(rem)}</div><div class="f-sub" id="f-sub">of ${Math.round(t.plannedSec/60)} min</div></div>`})}
+      <p class="focus-line">Stay with this task — Mochi believes in you ♡</p>
+      <div class="focus-btns">
+        ${t.running?`<button type="button" class="btn btn-primary btn-lg" data-action="focus-pause">${icon('pause')} Pause</button>`
+        :`<button type="button" class="btn btn-primary btn-lg" data-action="focus-resume">${icon('play')} Resume</button>`}
+        <button type="button" class="btn btn-ghost btn-lg" data-action="focus-finish">Finish Session</button>
+        <button type="button" class="btn-icon btn-ghost" data-action="focus-reset" aria-label="Reset" title="Reset session">${icon('x')}</button>
+      </div>
+      <div class="focus-meta" id="f-elapsed">Elapsed ${fmtClock(timerElapsed())} of ${Math.round(t.plannedSec/60)} min</div>
+      ${task&&task.estMin?`<div class="f-taskbar-wrap"><div class="task-prog-bar" style="max-width:none;height:7px"><i id="f-taskbar" style="width:${clamp(task.studiedMin/task.estMin*100,0,100)}%"></i></div><div class="focus-meta" id="f-taskbar-l" style="margin-top:5px">${fmtMin(task.studiedMin)} / ${task.estMin} min on this task</div></div>`:''}
+    </div>`;
+  }
+  if(t&&t.mode==='break'){
+    const rem=Math.max(0,t.plannedSec-timerElapsed());
+    return head+`<div class="focus-wrap">
+      <span class="focus-badge">BREAK</span>
+      ${ringHTML(rem/t.plannedSec*100,{size:240,stroke:15,live:true,center:`<div><div class="f-clock" id="f-clock">${fmtClock(rem)}</div><div class="f-sub">break</div></div>`,gold:true})}
+      <h2 class="focus-task">You've earned a break. 🌸</h2>
+      <p class="break-sug">Drink water · Stretch · Rest your eyes · A few deep breaths</p>
+      <div class="focus-btns">
+        ${[5,10,15].map(m=>`<button type="button" class="dur-chip ${Math.round(t.plannedSec/60)===m?'on':''}" data-action="break-start" data-min="${m}">${m} min</button>`).join('')}
+        <span style="display:inline-flex;gap:8px;align-items:center"><input class="dur-custom" type="number" min="1" max="60" placeholder="min"><button type="button" class="btn btn-ghost btn-sm" data-action="break-start-custom">Set</button></span>
+      </div>
+      <button type="button" class="btn btn-ghost" data-action="break-skip">Skip break</button>
+    </div>`;
+  }
+  if(justCompleted){
+    return head+`<div class="focus-wrap">
+      <span class="focus-badge goldb">SESSION COMPLETE</span>
+      <div class="focus-big">🎯</div>
+      <h2 class="focus-task">Focus Session Complete 🎯</h2>
+      <p class="focus-line">${fmtMin(justCompleted.sec/60)} focused${justCompleted.subject?` · ${esc(justCompleted.subject)}`:''}.</p>
+      <p class="focus-line" style="color:var(--text3)">That's one more step forward.</p>
+      <div class="focus-btns">
+        <button type="button" class="btn btn-primary btn-lg" data-action="take-break">Take a Break · ${U().breakMin} min 🌸</button>
+        <button type="button" class="btn btn-ghost btn-lg" data-action="focus-again">Start Another Session</button>
+      </div>
+      <div class="focus-btns">
+        ${[5,10,15].map(m=>`<button type="button" class="dur-chip" data-action="break-start" data-min="${m}">${m} min break</button>`).join('')}
+        <span style="display:inline-flex;gap:8px;align-items:center"><input class="dur-custom" type="number" min="1" max="60" placeholder="min"><button type="button" class="btn btn-ghost btn-sm" data-action="break-start-custom">Start</button></span>
+      </div>
+    </div>`;
+  }
+  if(justBreakDone){
+    return head+`<div class="focus-wrap">
+      <span class="focus-badge">READY</span>
+      <div class="focus-big">🌸</div>
+      <h2 class="focus-task">Break's over. Ready when you are.</h2>
+      <button type="button" class="btn btn-primary btn-lg" data-action="focus-again">Start Next Session</button>
+    </div>`;
+  }
+  if(focusSel.taskId!=='free'&&!state.tasks.find(x=>x.id===focusSel.taskId&&!x.completed))focusSel.taskId='free';
+  const pend=state.tasks.filter(x=>!x.completed);
+  const task=focusSel.taskId==='free'?null:findTask(focusSel.taskId);
+  return head+`<div class="focus-wrap">
+    <p class="focus-line">Let's get one focused session done.</p>
+    <div class="card focus-setup">
+      <div class="field"><label>Task</label><select id="focus-task" class="input">
+        <option value="free" ${focusSel.taskId==='free'?'selected':''}>Free focus session (no task)</option>
+        ${pend.map(x=>`<option value="${x.id}" ${focusSel.taskId===x.id?'selected':''}>${esc(x.title)} · ${esc(x.subject)} · ${niceDate(x.date)}</option>`).join('')}
+      </select></div>
+      ${focusSel.taskId==='free'?`<div class="field"><label>Subject</label><select id="focus-subject" class="input">${U().subjects.map(s=>`<option ${s===(focusSel.freeSubject||U().subjects[0])?'selected':''}>${esc(s)}</option>`).join('')}</select></div>`:''}
+      <div class="field"><label>Session length</label>
+        <div class="dur-chips">
+          ${[25,50,90].map(m=>`<button type="button" class="dur-chip ${focusSel.min===m?'on':''}" data-action="focus-len" data-min="${m}">${m} min</button>`).join('')}
+          <input class="dur-custom" id="focus-custom" type="number" min="1" max="180" placeholder="1–180" value="${focusSel.custom?esc(focusSel.custom):''}">
+        </div>
+      </div>
+      <p class="focus-meta" style="margin:2px 0 14px" id="focus-dur">Ready: <b>${effDur()} minutes</b>${task?` · ${esc(task.subject)} · estimated ${task.estMin} min, studied ${fmtMin(task.studiedMin)}`:' · free focus'}</p>
+      <button type="button" class="btn btn-primary btn-lg" data-action="start-focus">${icon('play')} Start Focus Session</button>
+    </div></div>`;
+}
+
+function renderGoals(){
+  let html=pageHead('GOALS','What are you working toward?',`<button type="button" class="btn btn-primary" data-action="open-goal-modal">${icon('plus')} New Goal</button>`);
+  html+=state.goals.length?`<div class="goal-grid">${state.goals.map(goalCardHTML).join('')}</div>`
+    :emptyState('What are you working toward?','Goals link your tasks and focus time to something bigger — with a reward you choose.','Create Your First Goal','open-goal-modal');
+  html+=journeyHTML();
+  return html;
+}
+
+function renderStats(){
+  const s=computeStats(),fresh=s.sessionCount===0;
+  const stat=(l,v,sub='')=>`<div class="stat lift"><div class="l">${l}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:''}</div>`;
+  let html=pageHead('STATISTICS','Your Numbers, Automatically',
+    fresh?'':`<span class="chip">🔥 ${s.curStreak} day streak</span>`);
+  if(fresh)html+=`<div class="card" style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap"><p class="page-sub">Your first focused session will appear here. Everything below updates itself from real focus time.</p><button type="button" class="btn btn-soft btn-sm" data-action="nav" data-nav="focus">${icon('play','s')} Start a session</button></div>`;
+  html+=`<div class="stat-grid">
+    ${stat('Total study time',fmtMin(s.totalMin),`${s.sessionCount} sessions`)}
+    ${stat('Today',fmtMin(s.todayMin),`${Math.round(Math.min(100,todayGoalPct()))}% of daily goal`)}
+    ${stat('This week',fmtMin(s.weekMin),`avg ${fmtMin(s.weekMin/7)}/day`)}
+    ${stat('This month',fmtMin(s.monthMin))}
+    ${stat('Average daily',fmtMin(s.avgDaily),`across ${journeyDay()} days`)}
+    ${stat('Longest session',fmtMin(s.longestSessionMin))}
+    ${stat('Focus sessions',s.sessionCount)}
+    ${stat('Tasks completed',s.tasksDone,`${s.tasksPending} remaining`)}
+    ${stat('Current streak',`🔥 ${s.curStreak}`,s.curStreak?'keep it alive':'study 15+ min to start')}
+    ${stat('Longest streak',s.longestStreak+'d')}
+    ${stat('Days studied',s.daysStudied,`${s.goalDays} daily goals met`)}
+    ${stat('Goals completed',`${s.goalsDone} / ${state.goals.length}`)}
+  </div>
+  <div class="card" style="margin-bottom:18px"><div class="card-title"><h3>This Week</h3><span class="chip">click a day</span></div>${weekChartHTML()}<div class="chart-detail" id="chart-detail">${dayDetailHTML(chartSelKey||todayKey())}</div></div>
+  <div class="card" style="margin-bottom:18px"><div class="card-title"><h3>Consistency Heatmap</h3><span class="chip">last 18 weeks</span></div>${heatmapHTML()}<div class="chart-detail" id="heat-detail">${dayDetailHTML(heatSelKey||todayKey())}</div></div>
+  <div class="card"><div class="card-title"><h3>Subject Breakdown</h3></div>${subjectBarsHTML()}</div>`;
+  return html;
+}
+
+function renderAchievements(){
+  const s=computeStats();
+  const unlocked=ACH_DEFS.filter(d=>state.achievements[d.id]).length;
+  let html=pageHead('ACHIEVEMENTS','Milestones on the Way',`<span class="chip">${unlocked} / ${ACH_DEFS.length} unlocked</span>`);
+  html+=`<div class="ach-grid">${ACH_DEFS.map(d=>{
+    const at=state.achievements[d.id],cur=d.cur(s),pct=Math.round(Math.min(100,cur/d.target*100));
+    return `<div class="card ach ${at?'unlocked':'locked'} lift">
+      <div class="ach-ic">${d.em}</div><h4>${d.name}</h4><p>${d.desc}</p>
+      <div class="ach-bar"><i style="width:${at?100:pct}%"></i></div>
+      <div class="ach-prog">${at?`Unlocked · ${new Date(at).toLocaleDateString('en-US',{month:'short',day:'numeric'})}`:`🔒 ${d.fmt(cur)}`}</div>
+    </div>`;
+  }).join('')}</div>`;
+  return html;
+}
+
+function renderCalendar(){
+  const first=new Date(calY,calM,1);
+  const lead=(first.getDay()+6)%7;
+  const daysIn=new Date(calY,calM+1,0).getDate();
+  const monthName=first.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  let cells='';
+  for(let i=lead;i>0;i--){const d=new Date(calY,calM,-i+1);cells+=`<button type="button" class="cal-day other" data-action="cal-day" data-key="${dateKey(d)}"><span class="cd-n">${d.getDate()}</span></button>`;}
+  for(let d=1;d<=daysIn;d++){
+    const k=dateKey(new Date(calY,calM,d));
+    const lv=heatLevel(minutesOn(k));
+    cells+=`<button type="button" class="cal-day ${k===todayKey()?'today':''} ${k===selectedCalKey?'sel':''}" data-action="cal-day" data-key="${k}"><span class="cd-n">${d}</span><span class="cd-act lv${lv}"></span></button>`;
+  }
+  const trail=(7-((lead+daysIn)%7))%7;
+  for(let d=1;d<=trail;d++){const dt=new Date(calY,calM+1,d);cells+=`<button type="button" class="cal-day other" data-action="cal-day" data-key="${dateKey(dt)}"><span class="cd-n">${d}</span></button>`;}
+  const k=selectedCalKey;
+  const ts=state.tasks.filter(t=>t.date===k),done=ts.filter(t=>t.completed);
+  const mins=minutesOn(k),sess=sessionsOn(k),refl=state.reflections[k];
+  const gp=Math.round(Math.min(100,mins/dailyGoalMin()*100));
+  const detail=`<div class="card">
+    <div class="card-title"><h3>${fmtDateLong(k)}</h3><button type="button" class="btn btn-soft btn-sm" data-action="cal-add-task">${icon('plus','s')} Add task for this day</button></div>
+    <div class="cal-detail-row"><span>Study time</span><b>${fmtMin(mins)}</b></div>
+    <div class="cal-detail-row"><span>Daily goal</span><b>${gp}%</b></div>
+    <div class="cal-detail-row"><span>Focus sessions</span><b>${sess.length}</b></div>
+    <div class="cal-detail-row"><span>Tasks</span><b>${done.length} / ${ts.length} completed</b></div>
+    ${refl?`<div class="cal-detail-row"><span>Reflection</span><b style="color:var(--gold)">${'★'.repeat(refl.rating||0)}${'☆'.repeat(5-(refl.rating||0))}</b></div>`:''}
+    ${ts.length?`<div style="margin-top:12px;display:flex;flex-direction:column;gap:6px">${ts.map(t=>`<div style="display:flex;gap:9px;align-items:center;font-size:13.5px;color:${t.completed?'var(--text3)':'var(--text)'};${t.completed?'text-decoration:line-through':''}"><span class="task-check ${t.completed?'on':''}" style="width:18px;height:18px;cursor:default">${t.completed?icon('check'):''}</span>${esc(t.title)}</div>`).join('')}</div>`:'<p class="empty-line" style="margin-top:10px">No tasks planned for this day.</p>'}
+  </div>`;
+  return pageHead('CALENDAR','Your Month at a Glance')+`
+  <div class="cal-layout">
+    <div class="card">
+      <div class="cal-head">
+        <div style="display:flex;gap:6px;align-items:center">
+          <button type="button" class="btn-icon btn-ghost" data-action="cal-nav" data-dir="-1" aria-label="Previous month">${icon('chevL')}</button>
+          <h3>${monthName}</h3>
+          <button type="button" class="btn-icon btn-ghost" data-action="cal-nav" data-dir="1" aria-label="Next month">${icon('chevR')}</button>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="cal-today">Today</button>
+      </div>
+      <div class="cal-dow">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<span>${d}</span>`).join('')}</div>
+      <div class="cal-grid">${cells}</div>
+    </div>${detail}</div>`;
+}
+
+function renderReflections(){
+  const tk=todayKey(),s=computeStats();
+  const todayTasks=state.tasks.filter(t=>t.date===tk);
+  const doneToday=todayTasks.filter(t=>t.completed);
+  const sess=sessionsOn(tk);
+  const per={};sess.forEach(x=>per[x.subject]=(per[x.subject]||0)+x.focusedSec/60);
+  const top=Object.entries(per).sort((a,b)=>b[1]-a[1])[0];
+  const ex=state.reflections[tk];ratingSel=ex?(ex.rating||0):0;
+  const carry=state.tasks.filter(t=>!t.completed&&!t.deferredAck&&t.date&&t.date<=tk);
+  const past=Object.keys(state.reflections).sort().reverse();
+  let html=pageHead('REFLECTIONS','Close the Day, Set Up Tomorrow');
+  html+=`<div class="card" style="margin-bottom:18px"><div class="card-title"><h3>Today's Progress</h3><span class="chip">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})}</span></div>
+  ${s.sessionCount===0&&todayTasks.length===0?'<p class="empty-line">Your first focused session will appear here.</p>':`
+  <div class="summary-grid">
+    <div class="sg-item"><b>${fmtMin(s.todayMin)}</b><span>focused</span></div>
+    <div class="sg-item"><b>${doneToday.length} / ${todayTasks.length}</b><span>tasks done</span></div>
+    <div class="sg-item"><b>${Math.round(Math.min(100,todayGoalPct()))}%</b><span>daily goal</span></div>
+    <div class="sg-item"><b>${sess.length}</b><span>sessions</span></div>
+    <div class="sg-item"><b>🔥 ${s.curStreak}</b><span>day streak</span></div>
+    ${top?`<div class="sg-item"><b>${esc(top[0])}</b><span>top subject</span></div>`:''}
+  </div>`}</div>`;
+  html+=`<div class="refl-grid">
+    <div class="card"><div class="card-title"><h3>Today's Reflection</h3></div>
+      <form id="reflectForm" novalidate>
+        <div class="field"><label>What did I accomplish today?</label><textarea class="input" name="accomplished" placeholder="Even small wins count.">${esc(ex?ex.accomplished:'')}</textarea></div>
+        <div class="field"><label>What should I improve tomorrow?</label><textarea class="input short" name="improve" placeholder="One honest, kind observation.">${esc(ex?ex.improve:'')}</textarea></div>
+        <div class="field"><label>How focused did I feel?</label><div class="stars" id="star-row">${[1,2,3,4,5].map(i=>`<button type="button" class="star ${i<=ratingSel?'on':''}" data-action="rate" data-v="${i}" aria-label="${i} star${i>1?'s':''}">★</button>`).join('')}</div></div>
+        <div style="display:flex;justify-content:flex-end;gap:10px">${ex?'<span class="chip">Saved ✓ — updating is allowed</span>':''}<button type="submit" class="btn btn-primary">Save Reflection</button></div>
+      </form>
+    </div>
+    <div class="card"><div class="card-title"><h3>Tomorrow's Starting Point</h3></div>
+      ${carry.length?carry.map(t=>`<div class="tomorrow-row">
+        <div><div class="tr-t">${esc(t.title)}</div><div class="tl-meta">${esc(t.subject)} · ${t.date<tk?'overdue from '+fmtDateShort(t.date):'today'} · ${fmtMin(t.studiedMin)} studied</div></div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button type="button" class="btn btn-soft btn-sm" data-action="tomorrow-move" data-id="${t.id}">Move to tomorrow</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-action="tomorrow-keep" data-id="${t.id}">Keep</button>
+          <button type="button" class="btn-icon btn-ghost" data-action="task-edit" data-id="${t.id}" aria-label="Edit">${icon('pencil')}</button>
+          <button type="button" class="btn-icon btn-ghost danger" data-action="tomorrow-remove" data-id="${t.id}" aria-label="Remove">${icon('trash')}</button>
+        </div></div>`).join('')
+      :'<p class="empty-line">Nothing left over — tomorrow starts clean. 🌸</p>'}
+    </div></div>`;
+  if(past.length){
+    html+=`<div class="card"><div class="card-title"><h3>Past Reflections</h3></div><div class="refl-past">${past.map(k=>{const r=state.reflections[k];return `<div class="refl-item card-soft">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="ri-date">${fmtDateLong(k)}</span><span class="ri-stars">${'★'.repeat(r.rating||0)}${'☆'.repeat(5-(r.rating||0))}</span></div>
+      ${r.accomplished?`<p><b>Accomplished:</b> ${esc(r.accomplished)}</p>`:''}
+      ${r.improve?`<p><b>Improve:</b> ${esc(r.improve)}</p>`:''}
+    </div>`;}).join('')}</div></div>`;
+  }
+  return html;
+}
+
+function renderSettings(){
+  const u=U();
+  return pageHead('SETTINGS','Make It Yours')+`<div class="settings-stack">
+    <form id="settingsForm" class="card">
+      <div class="card-title"><h3>Profile & Plan</h3></div>
+      <div class="frow">
+        <div class="field"><label>Your name</label><input class="input" name="name" value="${esc(u.name)}"></div>
+        <div class="field"><label>Placement target</label><input class="input" name="target" value="${esc(u.target)}"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Preparation duration (days)</label><input class="input" type="number" name="durationDays" min="7" max="1095" value="${u.durationDays}"></div>
+        <div class="field"><label>Daily study goal (hours)</label><input class="input" type="number" name="dailyHours" min="0.5" max="16" step="0.5" value="${u.dailyHours}"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Default focus session (minutes)</label><input class="input" type="number" name="sessionMin" min="5" max="180" value="${u.sessionMin}"></div>
+        <div class="field"><label>Default break (minutes)</label><input class="input" type="number" name="breakMin" min="1" max="60" value="${u.breakMin}"></div>
+      </div>
+      <div class="field"><label>Theme</label><div class="radio-row">
+        ${['light','dark'].map(t=>`<label class="radio-pill"><input type="radio" name="theme" value="${t}" ${u.theme===t?'checked':''}> ${t==='light'?'☀️ Blush light':'🌙 Soft plum dark'}</label>`).join('')}
+      </div></div>
+      <div class="field"><label>Study companion</label><div class="radio-row">
+        <label class="radio-pill"><input type="radio" name="comp" value="show" ${!u.compHidden?'checked':''}> 🐰 Show Mochi</label>
+        <label class="radio-pill"><input type="radio" name="comp" value="hide" ${u.compHidden?'checked':''}> Hide Mochi</label>
+      </div>
+      <p class="list-note">Mochi follows your cursor, naps when you're away, and can be tapped or dragged.</p></div>
+      <div class="field"><label>Daily quote</label><div class="radio-row">
+        <label class="radio-pill"><input type="radio" name="quotes" value="daily" ${u.quotes!=='off'?'checked':''}> Show a calm daily quote</label>
+        <label class="radio-pill"><input type="radio" name="quotes" value="off" ${u.quotes==='off'?'checked':''}> Off</label>
+      </div></div>
+      <div style="display:flex;justify-content:flex-end"><button type="submit" class="btn btn-primary">Save Changes</button></div>
+    </form>
+    <div class="card"><div class="card-title"><h3>Subjects</h3></div>
+      <div class="chips" style="margin-bottom:14px">${u.subjects.map(s=>`<span class="chip">${esc(s)}<button type="button" class="btn-icon" style="width:20px;height:20px" data-action="subject-remove" data-s="${esc(s)}" aria-label="Remove ${esc(s)}">${icon('x')}</button></span>`).join('')}</div>
+      <div class="ms-add"><input class="input" id="subj-add-input" placeholder="Add a subject (e.g. System Design)"><button type="button" class="btn btn-ghost" id="subj-add-btn">${icon('plus','s')} Add</button></div>
+      <p class="list-note">Removing a subject keeps existing tasks labeled with it.</p>
+    </div>
+    <div class="card"><div class="card-title"><h3>Your Data</h3></div>
+      <p class="page-sub" style="margin-bottom:14px">Everything lives in this browser. Export a backup anytime.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button type="button" class="btn btn-ghost" data-action="export-data">${icon('arrowR')} Export JSON</button>
+        <button type="button" class="btn btn-ghost danger" data-action="reset-data" style="color:var(--terra)">${icon('trash')} Reset everything</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+const PAGES={dashboard:renderDashboard,tasks:renderTasks,focus:renderFocus,goals:renderGoals,stats:renderStats,achievements:renderAchievements,calendar:renderCalendar,reflections:renderReflections,settings:renderSettings};
+const POST={
+  tasks:bindDrag,
+  focus(){
+    $('#focus-task')?.addEventListener('change',e=>{focusSel.taskId=e.target.value;focusSel.min=null;focusSel.custom='';renderPage();});
+    $('#focus-subject')?.addEventListener('change',e=>{focusSel.freeSubject=e.target.value;});
+    $('#focus-custom')?.addEventListener('input',e=>{focusSel.custom=e.target.value;const v=+e.target.value;if(v>=1&&v<=180)focusSel.min=v;const el=$('#focus-dur');if(el)el.innerHTML=`Ready: <b>${effDur()} minutes</b>`;});
+  },
+  reflections(){
+    $('#reflectForm')?.addEventListener('submit',e=>{
+      e.preventDefault();
+      const d=Object.fromEntries(new FormData(e.target).entries());
+      state.reflections[todayKey()]={accomplished:String(d.accomplished||''),improve:String(d.improve||''),rating:ratingSel,savedAt:Date.now()};
+      save();toast('Reflection saved. See you tomorrow. 🌙');renderPage();
+    });
+  },
+  settings(){
+    const f=$('#settingsForm');
+    f.addEventListener('submit',e=>{
+      e.preventDefault();
+      const d=Object.fromEntries(new FormData(f).entries());const u=U();
+      u.name=String(d.name||'').trim()||u.name;
+      u.target=String(d.target||'').trim()||u.target;
+      u.durationDays=clamp(+d.durationDays||90,7,1095);
+      u.dailyHours=clamp(+d.dailyHours||4,0.5,16);
+      u.sessionMin=clamp(+d.sessionMin||50,5,180);
+      u.breakMin=clamp(+d.breakMin||5,1,60);
+      u.quotes=d.quotes||'daily';
+      u.compHidden=d.comp==='hide';
+      save();toast('Settings saved.');renderApp();
+    });
+    $$('input[name="theme"]',f).forEach(r=>r.addEventListener('change',()=>{U().theme=r.value;applyTheme();save();}));
+    $$('input[name="comp"]',f).forEach(r=>r.addEventListener('change',()=>{U().compHidden=r.value==='hide';applyCompanionVisibility();save();}));
+    const addSubject=()=>{const v=$('#subj-add-input').value.trim();if(!v)return;if(U().subjects.includes(v)){toast('Already added.');return;}U().subjects.push(v);save();renderPage();toast(`Subject “${v}” added.`);};
+    $('#subj-add-btn').addEventListener('click',addSubject);
+    $('#subj-add-input').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addSubject();}});
+  },
+};
+
+function renderPage(){
+  const el=$('#page');
+  el.innerHTML=(PAGES[currentPage]||renderDashboard)();
+  el.style.animation='none';void el.offsetWidth;el.style.animation='';
+  (POST[currentPage]||(()=>{}))();
+  animateRings();
+}
+function updateChrome(){
+  $$('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===currentPage));
+  const st=streaks();
+  $('#side-streak').innerHTML=`<div class="streak-num">🔥 ${st.cur}</div><div class="streak-lbl">day streak${st.cur===1?'':'s'}</div>`;
+  $('#top-streak').textContent=`🔥 ${st.cur}d`;
+  $$('.theme-toggle-btn').forEach(b=>b.innerHTML=icon(U().theme==='dark'?'sun':'moon'));
+  applyCompanionVisibility();
+}
+function renderApp(){updateChrome();renderPage();updateMiniPill(true);if(!state.timer)document.title='Bloom · Placement Study Planner';}
+function navTo(p){
+  currentPage=p;
+  closeSheet();renderApp();
+  compPageLine(p);
+  window.scrollTo({top:0,behavior:'instant'in window?'instant':'auto'});
+}
+
+/* ================= actions ================= */
+const ACTIONS={
+  nav(el){navTo(el.dataset.nav);},
+  'theme-toggle'(){U().theme=U().theme==='dark'?'light':'dark';applyTheme();save();updateChrome();},
+  'more-open'(){$('#sheet').classList.add('open');},
+  'sheet-close'(){closeSheet();},
+  'quick-add'(){openTaskModal(null,todayKey());},
+  'open-task-modal'(){openTaskModal();},
+  'task-edit'(el){openTaskModal(findTask(el.dataset.id));},
+  'task-del'(el){const t=findTask(el.dataset.id);if(!t)return;
+    openConfirm('Delete task?',`“${t.title}” will be removed permanently.`,'Delete task',()=>{state.tasks=state.tasks.filter(x=>x.id!==t.id);save();renderApp();toast('Task deleted.');});},
+  'task-toggle'(el){const t=findTask(el.dataset.id);if(!t)return;t.completed=!t.completed;t.completedAt=t.completed?Date.now():null;
+    if(t.completed){toast("That's one more step forward.");compHearts(3);compSay('One more step forward! ♡',3000);}
+    checkAchievements();save();renderApp();},
+  'task-focus'(el){startFocusFromTask(el.dataset.id);},
+  'task-up'(el){moveTask(el.dataset.id,-1);},
+  'task-down'(el){moveTask(el.dataset.id,1);},
+  'filter-set'(el){taskFilter=el.dataset.filter;renderPage();},
+  'scope-set'(el){taskScope=el.dataset.scope;renderPage();},
+  'open-goal-modal'(){openGoalModal();},
+  'goal-edit'(el){openGoalModal(findGoal(el.dataset.id));},
+  'goal-del'(el){const g=findGoal(el.dataset.id);if(!g)return;
+    openConfirm('Delete goal?',`“${g.title}” and its milestones will be removed. Logged sessions stay in your statistics.`,'Delete goal',()=>{state.goals=state.goals.filter(x=>x.id!==g.id);save();renderApp();toast('Goal deleted.');});},
+  'goal-ms-toggle'(el){const g=findGoal(el.dataset.id),m=g&&g.milestones[+el.dataset.i];if(!m)return;m.done=!m.done;if(m.done)compHearts(2);checkGoalCompletions();checkAchievements();save();renderPage();},
+  'open-stage-new'(){openStageModal();},
+  'stage-edit'(el){openStageModal(state.journey.stages.find(s=>s.id===el.dataset.id));},
+  'stage-del'(el){const id=el.dataset.id;openConfirm('Delete stage?','This stage will be removed from your journey.','Delete stage',()=>{state.journey.stages=state.journey.stages.filter(s=>s.id!==id);checkAchievements();save();renderApp();});},
+  'stage-up'(el){const arr=state.journey.stages,i=arr.findIndex(s=>s.id===el.dataset.id);if(i>0){[arr[i-1],arr[i]]=[arr[i],arr[i-1]];save();renderPage();}},
+  'stage-down'(el){const arr=state.journey.stages,i=arr.findIndex(s=>s.id===el.dataset.id);if(i>=0&&i<arr.length-1){[arr[i+1],arr[i]]=[arr[i],arr[i+1]];save();renderPage();}},
+  gsubject(el){const s=el.dataset.s;gDraft.subs.has(s)?gDraft.subs.delete(s):gDraft.subs.add(s);$('#gsub-chips').innerHTML=goalSubjectChips();},
+  ssubject(el){const s=el.dataset.s;sDraft.subs.has(s)?sDraft.subs.delete(s):sDraft.subs.add(s);$('#ssub-chips').innerHTML=stageSubjectChips();},
+  'ms-add'(){const inp=$('#ms-input'),v=inp.value.trim();if(!v)return;gDraft.ms.push({text:v,done:false});inp.value='';$('#ms-list').innerHTML=msListHTML();},
+  'ms-del'(el){gDraft.ms.splice(+el.dataset.i,1);$('#ms-list').innerHTML=msListHTML();},
+  'start-focus'(){startFocusSession();},
+  'focus-len'(el){focusSel.min=+el.dataset.min;focusSel.custom='';renderPage();},
+  'focus-pause'(){pauseTimer();},
+  'focus-resume'(){resumeTimer();},
+  'focus-finish'(){finishTimer();},
+  'focus-reset'(){resetTimer();},
+  'take-break'(){startBreak(U().breakMin||5);},
+  'break-start'(el){startBreak(+el.dataset.min);},
+  'break-start-custom'(el){const inp=el.parentElement.querySelector('input');const v=+inp.value;if(v>=1&&v<=60)startBreak(v);else toast('Enter a break between 1 and 60 minutes.');},
+  'break-skip'(){skipBreak();},
+  'focus-again'(){justCompleted=null;justBreakDone=false;compMood('idle','Let\'s go again ♡',2600);renderPage();},
+  'chart-day'(el){chartSelKey=el.dataset.key;$$('#page .wcol').forEach(c=>c.classList.toggle('sel',c.dataset.key===chartSelKey));const d=$('#chart-detail');if(d)d.innerHTML=dayDetailHTML(chartSelKey);},
+  'heat-day'(el){heatSelKey=el.dataset.key;const d=$('#heat-detail');if(d)d.innerHTML=dayDetailHTML(heatSelKey);},
+  'cal-nav'(el){const dir=+el.dataset.dir;calM+=dir;if(calM<0){calM=11;calY--;}if(calM>11){calM=0;calY++;}renderPage();},
+  'cal-today'(){const n=new Date();calY=n.getFullYear();calM=n.getMonth();selectedCalKey=todayKey();renderPage();},
+  'cal-day'(el){selectedCalKey=el.dataset.key;renderPage();},
+  'cal-add-task'(){openTaskModal(null,selectedCalKey);},
+  rate(el){ratingSel=+el.dataset.v;const row=$('#star-row');if(row)row.innerHTML=[1,2,3,4,5].map(i=>`<button type="button" class="star ${i<=ratingSel?'on':''}" data-action="rate" data-v="${i}" aria-label="${i} stars">★</button>`).join('');},
+  'tomorrow-move'(el){const t=findTask(el.dataset.id);if(!t)return;t.date=tomorrowKey();t.deferredAck=false;save();renderPage();toast('Moved to tomorrow.');},
+  'tomorrow-keep'(el){const t=findTask(el.dataset.id);if(!t)return;t.deferredAck=true;save();renderPage();},
+  'tomorrow-remove'(el){const t=findTask(el.dataset.id);if(!t)return;openConfirm('Remove task?',`“${t.title}” will be deleted.`,'Remove',()=>{state.tasks=state.tasks.filter(x=>x.id!==t.id);save();renderApp();toast('Task removed.');});},
+  'subject-remove'(el){const s=el.dataset.s;U().subjects=U().subjects.filter(x=>x!==s);save();renderPage();toast('Subject removed.');},
+  'export-data'(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='bloom-study-data.json';a.click();URL.revokeObjectURL(a.href);toast('Backup exported.');},
+  'reset-data'(){openConfirm('Reset everything?','All your tasks, goals, sessions, streaks and progress will be permanently deleted.','Reset everything',()=>{localStorage.removeItem(KEY);location.reload();});},
+  'modal-close'(){closeModal();},
+  'confirm-yes'(){const cb=confirmCb;confirmCb=null;closeModal();cb&&cb();},
+  'comp-hug'(){compHug();},
+  'comp-talk'(){compStartTalk();},
+  'comp-motivate'(){compMotivate();},
+  'comp-sleep'(){compGoSleep();},
+  'comp-reply'(el){compTalkReply(+el.dataset.i);},
+  'comp-bye'(){compEndTalk();},
+};
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-action]');
+  if(!el)return;
+  const fn=ACTIONS[el.dataset.action];
+  if(fn){e.preventDefault();fn(el,e);}
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeSheet();}
+  if(e.key==='Enter'&&e.target.closest&&e.target.closest('.pill')){navTo('focus');}
+});
+function closeSheet(){$('#sheet').classList.remove('open');}
+
+/* ================= onboarding ================= */
+const OB_SUBJECTS=['DSA','Java','Python','DBMS','Operating Systems','Computer Networks','OOP','Aptitude','Coding Practice','Projects','Resume','Interview Preparation'];
+const OB_TARGETS=['Software Developer','Full Stack Developer','Java Developer','Data Analyst','Cybersecurity','Other'];
+let ob=null;
+function startOnboarding(){
+  ob={step:0,name:'',target:'',targetCustom:'',days:90,hours:4,subjects:new Set(),session:50,custom:''};
+  $('#onboard').classList.remove('hidden');
+  renderOb();
+  $('#onboard').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();obNext();}});
+}
+function renderOb(){
+  const steps=[
+    ()=>`<h1 class="ob-title serif">Build Your Placement Journey.</h1>
+      <p class="ob-sub">A little progress every day can become a very different future.</p>
+      <p class="ob-tag">Plan today · Focus deeply · Build your future</p>
+      <div class="field"><label>What's your name?</label><input class="input" id="ob-name" placeholder="Your name" value="${esc(ob.name)}" autofocus></div>`,
+    ()=>`<span class="eyebrow">STEP 2 · YOUR GOAL</span><h1 class="ob-title serif" style="font-size:clamp(22px,3.6vw,30px)">What's your target?</h1>
+      <div class="ob-chips" style="margin-bottom:14px">${OB_TARGETS.map(t=>`<button type="button" class="ob-chip ${ob.target===t?'on':''}" data-action="ob-target" data-t="${t}">${t}</button>`).join('')}</div>
+      ${ob.target==='Other'?`<div class="field"><label>Tell us your target</label><input class="input" id="ob-target-custom" placeholder="e.g. Data Engineer" value="${esc(ob.targetCustom)}"></div>`:''}`,
+    ()=>`<span class="eyebrow">STEP 3 · TIMELINE</span><h1 class="ob-title serif" style="font-size:clamp(22px,3.6vw,30px)">How long, and how deep?</h1>
+      <div class="frow">
+        <div class="field"><label>How many days do you want to prepare?</label><input class="input" type="number" id="ob-days" min="7" max="1095" value="${ob.days}"></div>
+        <div class="field"><label>Hours per day?</label><input class="input" type="number" id="ob-hours" min="0.5" max="16" step="0.5" value="${ob.hours}"></div>
+      </div>
+      <p class="empty-line">You can adjust both anytime in Settings.</p>`,
+    ()=>`<span class="eyebrow">STEP 4 · SUBJECTS</span><h1 class="ob-title serif" style="font-size:clamp(22px,3.6vw,30px)">Pick your main subjects</h1>
+      <p class="ob-sub" style="margin-bottom:14px">Choose everything you'll prepare — add or remove later.</p>
+      <div class="ob-chips">${OB_SUBJECTS.map(s=>`<button type="button" class="ob-chip ${ob.subjects.has(s)?'on':''}" data-action="ob-subject" data-s="${s}">${s}</button>`).join('')}</div>`,
+    ()=>`<span class="eyebrow">STEP 5 · RHYTHM</span><h1 class="ob-title serif" style="font-size:clamp(22px,3.6vw,30px)">Daily preferred study sessions</h1>
+      <div class="ob-chips" style="margin-bottom:14px">${[25,50,90].map(m=>`<button type="button" class="ob-chip ${ob.session===m&&!ob.custom?'on':''}" data-action="ob-session" data-m="${m}">${m} minutes</button>`).join('')}</div>
+      <div class="field"><label>Custom (1–180 minutes)</label><input class="input" type="number" id="ob-session-custom" min="1" max="180" placeholder="e.g. 40" value="${esc(ob.custom)}"></div>`,
+    ()=>`<div style="text-align:center">
+        <div style="font-size:44px;margin-bottom:6px">🌸</div>
+        <h1 class="ob-title serif">Your placement journey is ready.</h1>
+        <div class="ob-recap" style="text-align:left">
+          <div><span>Name</span><b>${esc(ob.name)}</b></div>
+          <div><span>Target</span><b>${esc(ob.target==='Other'?(ob.targetCustom.trim()||'Placement'):ob.target)}</b></div>
+          <div><span>Duration</span><b>${ob.days} days</b></div>
+          <div><span>Daily goal</span><b>${ob.hours} hours</b></div>
+          <div><span>Subjects</span><b>${ob.subjects.size} selected</b></div>
+          <div><span>Sessions</span><b>${ob.custom?ob.custom:ob.session} min</b></div>
+        </div>
+        <p class="empty-line" style="margin-top:10px">Mochi is waiting to follow you around ♡</p>
+      </div>`,
+  ];
+  const last=ob.step===5;
+  $('#onboard').innerHTML=`<div class="ob-deco a"></div><div class="ob-deco b"></div>
+  <div class="ob-card"><div class="ob-step">${steps[ob.step]()}</div>
+  <p class="ob-err" id="ob-err"></p>
+  <div class="ob-btns">
+    ${ob.step>0?`<button type="button" class="btn btn-ghost" data-action="ob-back">Back</button>`:'<span></span>'}
+    <button type="button" class="btn btn-primary btn-lg" data-action="${last?'ob-start':'ob-next'}">${last?'Start My Journey →':'Continue'}</button>
+  </div>
+  <div class="ob-dots">${steps.map((_,i)=>`<span class="ob-dot ${i===ob.step?'on':''}"></span>`).join('')}</div>
+  </div>`;
+  const setFocus=()=>{const f=$('#ob-name')||$('#ob-target-custom')||$('#ob-days')||$('#ob-session-custom');if(f)f.focus();};
+  setTimeout(setFocus,60);
+}
+function obErr(m){const e=$('#ob-err');if(e)e.textContent=m||'';}
+function obNext(){
+  obErr('');
+  if(ob.step===0){const v=($('#ob-name')?.value||'').trim();if(!v)return obErr('Please tell me your name.');ob.name=v;}
+  if(ob.step===1){
+    if(!ob.target)return obErr('Pick a target role — or choose Other.');
+    if(ob.target==='Other'){const v=($('#ob-target-custom')?.value||'').trim();if(!v)return obErr('Write your custom target.');ob.targetCustom=v;}
+  }
+  if(ob.step===2){
+    const d=+($('#ob-days')?.value||0),h=+($('#ob-hours')?.value||0);
+    if(!(d>=7&&d<=1095))return obErr('Duration should be between 7 and 1095 days.');
+    if(!(h>=0.5&&h<=16))return obErr('Daily hours should be between 0.5 and 16.');
+    ob.days=Math.round(d);ob.hours=h;
+  }
+  if(ob.step===3){if(!ob.subjects.size)return obErr('Pick at least one subject.');}
+  if(ob.step===4){
+    const c=($('#ob-session-custom')?.value||'').trim();
+    if(c){const v=+c;if(!(v>=1&&v<=180))return obErr('Custom session must be 1–180 minutes.');ob.custom=c;}
+  }
+  ob.step++;renderOb();
+}
+function finishOnboarding(){
+  const target=ob.target==='Other'?(ob.targetCustom.trim()||'Placement'):ob.target;
+  state=defaultState();
+  state.user={name:ob.name.trim(),target,durationDays:clamp(ob.days,7,1095),dailyHours:clamp(ob.hours,0.5,16),sessionMin:clamp(ob.custom?+ob.custom:ob.session,1,180),breakMin:5,subjects:[...ob.subjects],theme:'light',quotes:'daily',compHidden:false,createdAt:new Date().toISOString()};
+  const base=[['Programming Fundamentals',['Coding Practice']],['DSA',['DSA']],['Core CS',['DBMS','Operating Systems','Computer Networks','OOP']],['Aptitude',['Aptitude']],['Projects',['Projects']],['Resume',['Resume']],['Mock Interviews',['Interview Preparation']],['Coding Assessments',['Coding Practice','DSA']],['PLACEMENT READY',[]]];
+  state.journey.stages=base.map(([name,subs])=>({id:uid(),name,subjects:subs.filter(s=>state.user.subjects.includes(s)),status:'not-started',targetDate:''}));
+  save();
+  $('#onboard').classList.add('hidden');
+  $('#app').classList.remove('hidden');
+  applyTheme();renderApp();initCute();
+  toast(`Welcome, ${state.user.name.split(' ')[0]}. One focused session at a time.`);
+}
+Object.assign(ACTIONS,{
+  'ob-next'(){obNext();},
+  'ob-back'(){if(ob.step>0){ob.step--;renderOb();}},
+  'ob-start'(){finishOnboarding();},
+  'ob-target'(el){ob.target=el.dataset.t;renderOb();},
+  'ob-subject'(el){const s=el.dataset.s;ob.subjects.has(s)?ob.subjects.delete(s):ob.subjects.add(s);el.classList.toggle('on');obErr('');},
+  'ob-session'(el){ob.session=+el.dataset.m;ob.custom='';renderOb();},
+});
+
+/* ================= shell & init ================= */
+function applyTheme(){document.documentElement.dataset.theme=U().theme;}
+const NAV=[['dashboard','home','Dashboard'],['tasks','tasks','Tasks'],['focus','timer','Focus'],['goals','target','Goals'],['stats','chart','Statistics'],['achievements','trophy','Achievements'],['calendar','calendar','Calendar'],['reflections','reflect','Reflections'],['settings','settings','Settings']];
+const NAV_MAIN=[['dashboard','home','Home'],['tasks','tasks','Tasks'],['focus','timer','Focus'],['goals','target','Goals'],['stats','chart','Stats']];
+function initShell(){
+  $('#logo-ic').innerHTML=icon('heart');$('#logo-ic2').innerHTML=icon('heart');
+  $('#more-btn').innerHTML=icon('dots');
+  $('#side-nav').innerHTML=NAV.map(([p,i,l])=>`<button type="button" class="nav-item" data-action="nav" data-nav="${p}">${icon(i)}${l}</button>`).join('');
+  $('#bottom-nav').innerHTML=NAV_MAIN.map(([p,i,l])=>`<button type="button" class="bn-item" data-action="nav" data-nav="${p}">${icon(i)}${l}</button>`).join('');
+  $('#sheet-grid').innerHTML=NAV.map(([p,i,l])=>`<button type="button" class="nav-item" data-action="nav" data-nav="${p}">${icon(i)}${l}</button>`).join('');
+}
+function init(){
+  initShell();
+  state=loadState();
+  if(state&&state.user){
+    applyTheme();
+    $('#app').classList.remove('hidden');
+    renderApp();
+    initCute();
+    if(U().compHidden)setTimeout(()=>toast('🐰 Mochi is hidden — enable her in Settings → Study companion'),1500);
+  }else{
+    startOnboarding();
+  }
+}
+init();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>
