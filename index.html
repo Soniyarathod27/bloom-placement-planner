@@ -1525,7 +1525,7 @@ function pauseTimer(){
   compMood('idle',t.mode==='break'?'Break paused~ no rush ♡':'Paused! Stretch a little~',3200);
 }
 function resumeTimer(){
-  const t=state.timer;if(!t||!t.running)return;
+  const t=state.timer;if(!t||t.running)return;
   t.startedAt=Date.now();t.running=true;
   save();renderPage();updateMiniPill(true);
   compMood(t.mode==='break'?'rest':'focus',t.mode==='break'?'Break continues~ ♡':"Let's finish strong~!",3000);
@@ -2071,12 +2071,15 @@ function renderSettings(){
       <div class="ms-add"><input class="input" id="subj-add-input" placeholder="Add a subject (e.g. System Design)"><button type="button" class="btn btn-ghost" id="subj-add-btn">${icon('plus','s')} Add</button></div>
       <p class="list-note">Removing a subject keeps existing tasks labeled with it.</p>
     </div>
-    <div class="card"><div class="card-title"><h3>Your Data</h3></div>
-      <p class="page-sub" style="margin-bottom:14px">Everything lives in this browser. Export a backup anytime.</p>
+    <div class="card"><div class="card-title"><h3>Backup &amp; Restore</h3></div>
+      <p class="page-sub" style="margin-bottom:14px">Your Bloom history stays in this browser. Export a backup before changing devices, and import that backup whenever you need to restore your tasks, sessions, goals, streaks, reflections, and progress.</p>
+      <input type="file" id="import-data-file" accept="application/json,.json" hidden>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <button type="button" class="btn btn-ghost" data-action="export-data">${icon('arrowR')} Export JSON</button>
+        <button type="button" class="btn btn-ghost" data-action="import-data">${icon('arrowR')} Import JSON</button>
         <button type="button" class="btn btn-ghost danger" data-action="reset-data" style="color:var(--terra)">${icon('trash')} Reset everything</button>
       </div>
+      <p class="list-note" style="margin-top:10px">Import replaces the current Bloom data on this device. Nothing is uploaded to a server.</p>
     </div>
   </div>`;
 }
@@ -2198,7 +2201,17 @@ const ACTIONS={
   'tomorrow-keep'(el){const t=findTask(el.dataset.id);if(!t)return;t.deferredAck=true;save();renderPage();},
   'tomorrow-remove'(el){const t=findTask(el.dataset.id);if(!t)return;openConfirm('Remove task?',`“${t.title}” will be deleted.`,'Remove',()=>{state.tasks=state.tasks.filter(x=>x.id!==t.id);save();renderApp();toast('Task removed.');});},
   'subject-remove'(el){const s=el.dataset.s;U().subjects=U().subjects.filter(x=>x!==s);save();renderPage();toast('Subject removed.');},
-  'export-data'(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='bloom-study-data.json';a.click();URL.revokeObjectURL(a.href);toast('Backup exported.');},
+  'export-data'(){
+    const backup={app:'Bloom · Placement Study Planner',schema:'bloom-study-backup',version:1,exportedAt:new Date().toISOString(),state};
+    const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='bloom-study-data.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    toast('Backup exported. Keep this JSON file somewhere safe.');
+  },
+  'import-data'(){
+    const input=$('#import-data-file');
+    if(input){input.value='';input.click();}
+  },
   'reset-data'(){openConfirm('Reset everything?','All your tasks, goals, sessions, streaks and progress will be permanently deleted.','Reset everything',()=>{localStorage.removeItem(KEY);location.reload();});},
   'modal-close'(){closeModal();},
   'confirm-yes'(){const cb=confirmCb;confirmCb=null;closeModal();cb&&cb();},
@@ -2209,6 +2222,43 @@ const ACTIONS={
   'comp-reply'(el){compTalkReply(+el.dataset.i);},
   'comp-bye'(){compEndTalk();},
 };
+function importBloomBackup(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const parsed=JSON.parse(String(reader.result||''));
+      const incoming=parsed&&parsed.schema==='bloom-study-backup' ? parsed.state : parsed;
+      if(!incoming || typeof incoming!=='object' || !incoming.user || typeof incoming.user!=='object'){
+        throw new Error('This file does not contain a valid Bloom backup.');
+      }
+      const restored={...defaultState(),...incoming};
+      restored.version=1;
+      if(!Array.isArray(restored.tasks))restored.tasks=[];
+      if(!Array.isArray(restored.goals))restored.goals=[];
+      if(!Array.isArray(restored.sessions))restored.sessions=[];
+      if(!restored.reflections || typeof restored.reflections!=='object')restored.reflections={};
+      if(!restored.achievements || typeof restored.achievements!=='object')restored.achievements={};
+      if(!restored.journey || typeof restored.journey!=='object')restored.journey={stages:[]};
+      if(!Array.isArray(restored.journey.stages))restored.journey.stages=[];
+      openConfirm('Restore Bloom backup?',`This will replace the current Bloom data with the backup from ${parsed?.exportedAt ? new Date(parsed.exportedAt).toLocaleString() : 'the selected file'}. Your current data will be overwritten.`, 'Restore backup',()=>{
+        state=restored;
+        save();
+        toast('Backup restored. Bloom will reload now.');
+        setTimeout(()=>location.reload(),500);
+      });
+    }catch(err){
+      toast(err?.message||'Could not read that backup file.');
+    }
+  };
+  reader.onerror=()=>toast('Could not read that backup file.');
+  reader.readAsText(file);
+}
+
+document.addEventListener('change',e=>{
+  if(e.target?.id==='import-data-file')importBloomBackup(e.target.files?.[0]);
+});
+
 document.addEventListener('click',e=>{
   const el=e.target.closest('[data-action]');
   if(!el)return;
